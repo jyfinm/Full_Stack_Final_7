@@ -2,19 +2,21 @@ from pathlib import Path
 
 import wrds
 import pandas as pd
+from settings import config
 
 OUTPUT_DIR = Path(config("OUTPUT_DIR"))
 DATA_DIR = Path(config("DATA_DIR"))
 WRDS_USERNAME = config("WRDS_USERNAME")
 
-#See here: https://www.crsp.org/wp-content/uploads/guides/CRSP_US_Treasury_Database_Guide_for_SAS_ASCII_EXCEL_R.pdf
+#data from: https://wrds-www.wharton.upenn.edu/pages/get-data/center-research-security-prices-crsp/annual-update/treasuries/fama-bond-portfolios-monthly-only/
+#See here for more info: https://www.crsp.org/wp-content/uploads/guides/CRSP_US_Treasury_Database_Guide_for_SAS_ASCII_EXCEL_R.pdf
 description_crsp_fama = {
-    "mcaldt: Last Quotation Date in the Month",
-    "kytreasnox: Treasury Record Identifier", 
-    "tmewretd: Monthly Equal Weighted Portfolio Return"
+    "mcaldt": "Last Quotation Date in the Month",
+    "kytreasnox": "Treasury Record Identifier", 
+    "tmewretd": "Monthly Equal Weighted Portfolio Return"
 }
-def pull_fama_bond_portfolios(start_date='1960-01-31', end_date='2024-12-31'):
-    db = wrds.Connection()
+def pull_fama_bond_portfolios(wrds_username=WRDS_USERNAME, start_date='1960-01-31', end_date='2024-12-31'):
+    db = wrds.Connection(wrds_username=WRDS_USERNAME)
 
     # SQL query to pull Fama bond portfolio returns
     query = f"""
