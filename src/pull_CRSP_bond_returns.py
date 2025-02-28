@@ -6,9 +6,11 @@ import numpy as np
 import wrds
 from settings import config
 
-OUTPUT_DIR = Path(config.OUTPUT_DIR)
-DATA_DIR = Path(config.DATA_DIR)
-WRDS_USERNAME = config.WRDS_USERNAME
+DATA_DIR = Path(config("DATA_DIR"))
+WRDS_USERNAME = config("WRDS_USERNAME")
+START_DATE = config("START_DATE")
+END_DATE = config("END_DATE")
+
 # data from: https://wrds-www.wharton.upenn.edu/pages/get-data/wrds-bond-returns/
 description_bondret = {
     "date": "Date",
@@ -35,13 +37,17 @@ description_bondret = {
     "ncoups": "Number of coupons per year",
     "amount_outstanding": "Amount oustanding",
     "n_mr": "Numeric Moody Rating (1=AAA)",
-    "tmt": "Time to Maturity (Years)"
+    "tmt": "Time to Maturity (Years)",
+    "yield": "Yield",
+    "t_yld_pt": "Average	trade‐weighted	yield	point",
+    "ret_ldm" : "Monthly	return	calculated	based	on	PRICE_LDM	and	accrued	coupon	interest",
+    "ret_l5m" : "Monthly	return	calculated	based	on	PRICE_L5M	and	accrued	coupon	interest",
+    "ret_eom" : "Monthly	return	calculated	based	on	PRICE_EOM (Last	price	at	which	bond	was	traded	in	a	given month) and	accrued	coupon	interest"
 }
 
 #Referenced 
 #https://github.com/zhangruoxikathywork/corporate_bond_liquidity_research/blob/main/src/load_wrds_bondret.py
-def pull_bond_returns(wrds_username=WRDS_USERNAME, start_date='1960-01-31', end_date='2024-12-31'):
-    db = wrds.Connection(wrds_username=WRDS_USERNAME)
+def pull_bond_returns(wrds_username=WRDS_USERNAME, start_date=START_DATE, end_date=END_DATE):
 
     # All query fields
     # cusip, date, price_eom, price_ldm, price_l5m,
@@ -55,10 +61,7 @@ def pull_bond_returns(wrds_username=WRDS_USERNAME, start_date='1960-01-31', end_
     query = f"""
         SELECT 
             cusip, date, price_eom, tmt,
-            t_volume, t_dvolume, t_spread,
-            offering_amt, offering_price,
-            principal_amt, maturity, coupon, ncoups,
-            amount_outstanding, r_mr, n_mr, offering_date
+            yield, t_yld_pt, ret_eom
         FROM 
             WRDSAPPS.BONDRET
         WHERE 

@@ -6,9 +6,10 @@ import numpy as np
 import wrds
 from settings import config
 
-OUTPUT_DIR = Path(config.OUTPUT_DIR)
-DATA_DIR = Path(config.DATA_DIR)
-WRDS_USERNAME = config.WRDS_USERNAME
+DATA_DIR = Path(config("DATA_DIR"))
+WRDS_USERNAME = config("WRDS_USERNAME")
+START_DATE = config("START_DATE")
+END_DATE = config("END_DATE")
 
 # data from: https://wrds-www.wharton.upenn.edu/pages/get-data/wrds-bond-returns/wrds-clean-trace-enhanced-file/
 description_bondret_clean = {
@@ -23,12 +24,11 @@ description_bondret_clean = {
 
 }
 
-def pull_bond_returns_clean(wrds_username=WRDS_USERNAME, start_date='2003-01-31', end_date='2024-12-31'):
-    db = wrds.Connection(wrds_username=WRDS_USERNAME)
+def pull_bond_returns_clean(wrds_username=WRDS_USERNAME, start_date=START_DATE, end_date=END_DATE):
 
     query = f"""
         SELECT 
-            cusip_id, bond_sym_id, company_symbol, trd_exctn_dt, trd_exctn_tm, yld_pt, yld_sign_cd, rptd_pr
+            cusip_id, trd_exctn_dt, yld_pt
         FROM 
             wrdsapps_bondret.TRACE_ENHANCED_CLEAN
         WHERE 
