@@ -56,11 +56,11 @@ def pull_bond_returns(wrds_username=WRDS_USERNAME, start_date=START_DATE, end_da
     # security_level, conv, offering_date, offering_amt, offering_price,
     # principal_amt, maturity, treasury_maturity, coupon, day_count_basis,
     # dated_date, first_interest_date, last_interest_date, ncoups,
-    # amount_outstanding, r_sp, r_mr, r_fr, n_sp, n_mr, n_fr, rating_num
+    # r_sp, r_mr, r_fr, n_sp, n_mr, n_fr, rating_num
 
     query = f"""
         SELECT 
-            cusip, date, price_eom, tmt,
+            cusip, date, price_eom, tmt, amount_outstanding,
             yield, t_yld_pt, ret_eom
         FROM 
             WRDSAPPS.BONDRET
