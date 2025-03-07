@@ -8,7 +8,6 @@ This module provides functions to download the treasury returns CSV file from th
 given URL and save it to a local data directory. You can later load the saved file
 for further analysis.
 
-Thank you to Tobias Rodriguez del Pozo for his assistance in writing similar code.
 """
 
 from pathlib import Path

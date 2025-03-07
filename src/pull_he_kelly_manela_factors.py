@@ -7,8 +7,23 @@ It then unzips the file in memory and saves only the CSV file:
     He_Kelly_Manela_Factors_And_Test_Assets_monthly.csv
 to the designated DATA_DIR (as defined in settings.py).
 
+
+This module defines a function to process the factors DataFrame. It:
+  1. Renames the 'yyyymm' column to 'date' and converts it to datetime using format "%Y%m",
+     adjusting it to the month end.
+  2. Identifies columns starting with "US_bonds_".
+  3. Splits these columns into two groups:
+       - group_01_10: columns with numeric suffix between 1 and 10,
+       - group_11_20: columns with numeric suffix between 11 and 20.
+  4. Creates two DataFrames: 
+       - us_tr_df: containing 'date' and columns from group_01_10,
+       - us_corp_df: containing 'date' and columns from group_11_20.
+  5. Drops rows where all entries in the respective group columns are NaN (ignoring the 'date' column).
+
+When this module is run as a script, it will load the raw factors data, process it, and save the US corporate bonds
+DataFrame (us_corp_df) as a parquet file in DATA_DIR.
+
 This file contains the factor returns and test asset returns used in He, Kelly, and Manela (2017).
-Thank you to Tobias Rodriguez del Pozo for his assistance in writing similar code.
 """
 
 import requests
@@ -117,88 +132,7 @@ def process_he_kelly_manela_factors(test_df):
     
     return us_tr_df, us_corp_df
 
-def calculate_decile_analysis(decile_returns_df, us_corp_df):
-    """
-    Calculate analysis metrics comparing decile portfolio returns with benchmark US corporate bond returns.
-    
-    This function merges the decile returns DataFrame and the benchmark US corporate bonds DataFrame 
-    on the 'date' column (using an inner join). It then computes, for each decile (11 to 20):
-      - Pearson correlation between the replicated decile return and the benchmark return,
-      - R² (square of the correlation),
-      - Regression parameters (slope and intercept) from a linear regression of benchmark returns on the replication,
-      - Mean Absolute Error (MAE) and Root Mean Squared Error (RMSE) from the regression,
-      - Tracking error (standard deviation of the difference between benchmark and replicated returns).
-    
-    Parameters
-    ----------
-    decile_returns_df : pd.DataFrame
-        DataFrame containing the replicated decile returns with a 'date' column and decile columns
-        labeled as integers 11, 12, ..., 20.
-    us_corp_df : pd.DataFrame
-        DataFrame containing the benchmark US corporate bond returns with a 'date' column and columns
-        named "US_bonds_11", "US_bonds_12", ..., "US_bonds_20".
-        
-    Returns
-    -------
-    analysis_df : pd.DataFrame
-        A DataFrame with one row per decile and columns:
-            - 'decile'
-            - 'correlation'
-            - 'r_squared'
-            - 'slope'
-            - 'intercept'
-            - 'mae'
-            - 'rmse'
-            - 'tracking_error'
-    """
 
-    # Merge the two DataFrames on 'date'
-    common_df = pd.merge(decile_returns_df, us_corp_df, on="date", how="inner", suffixes=('_ret', '_corp'))
-    
-    analysis_list = []
-    for decile in range(11, 21):
-        # In decile_returns_df, the column is simply the decile number (e.g., 11)
-        ret_col = decile  
-        # In us_corp_df, the benchmark column is named "US_bonds_" + decile
-        corp_col = "US_bonds_" + str(decile)
-        
-        if ret_col in common_df.columns and corp_col in common_df.columns:
-            sub_df = common_df[[ret_col, corp_col]].dropna()
-            if len(sub_df) > 0:
-                # Compute Pearson correlation and r^2.
-                corr = sub_df[ret_col].corr(sub_df[corp_col])
-                r2 = corr ** 2
-                
-                # Run a simple linear regression (using np.polyfit: benchmark ~ replication)
-                x = sub_df[ret_col].values
-                y = sub_df[corp_col].values
-                slope, intercept = np.polyfit(x, y, 1)
-                
-                # Compute predicted values and residual metrics.
-                y_pred = slope * x + intercept
-                mae = np.mean(np.abs(y - y_pred))
-                rmse = np.sqrt(np.mean((y - y_pred) ** 2))
-                
-                # Tracking error: standard deviation of the difference between benchmark and replication.
-                tracking_error = np.std(y - x)
-            else:
-                corr = r2 = slope = intercept = mae = rmse = tracking_error = None
-        else:
-            corr = r2 = slope = intercept = mae = rmse = tracking_error = None
-
-        analysis_list.append({
-            "decile": decile,
-            "correlation": corr,
-            "r_squared": r2,
-            "slope": slope,
-            "intercept": intercept,
-            "mae": mae,
-            "rmse": rmse,
-            "tracking_error": tracking_error
-        })
-    
-    analysis_df = pd.DataFrame(analysis_list)
-    return analysis_df
 
 def _demo():
     """
@@ -209,3 +143,8 @@ def _demo():
 
 if __name__ == "__main__":
     pull_he_kelly_manela_factors()
+
+    df = load_he_kelly_manela_factors()
+    us_tr_df, us_corp_df = process_he_kelly_manela_factors(df)
+    output_path = DATA_DIR / "us_corp_bonds.parquet"
+    us_corp_df.to_parquet(output_path)

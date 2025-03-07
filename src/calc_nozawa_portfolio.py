@@ -1,6 +1,4 @@
 """
-nozawa_portfolio_approximations.py
-
 Functions to process and merge bond data in order to construct portfolio approximations 
 following Nozawa (2017) as used in He, Manela, and Kelly (2017).
 
@@ -221,8 +219,7 @@ if __name__ == "__main__":
     crsp_df = pull_CRSP_bond_returns.load_bondret(data_dir=DATA_DIR)
     
     # Process all data: this returns proc_open, proc_crsp, and the merged DataFrame.
-    processed = process_all_data(open_df, crsp_df)
-    merged = processed["merged"]
+    open_df, crsp_df, merged = process_all_data(open_df, crsp_df)
     
     # Calculate decile returns using the vectorized approach.
     portfolio_returns_fwd, decile_returns_df = calculate_decile_returns(merged)
