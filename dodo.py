@@ -150,33 +150,32 @@ def task_pull_fred():
 ##############################$
 ## Demo: Other misc. data pulls
 ##############################$
-# def task_pull_other():
-#     """ """
-#     file_dep = [
-#         "./src/pull_bloomberg.py",
-#         "./src/pull_CRSP_Compustat.py",
-#         "./src/pull_CRSP_stock.py",
-#         "./src/pull_fed_yield_curve.py",
-#         ]
-#     file_output = [
-#         "bloomberg.parquet",
-#         "CRSP_Compustat.parquet",
-#         "CRSP_stock.parquet",
-#         "fed_yield_curve.parquet",
-#         ]
-#     targets = [DATA_DIR / file for file in file_output]
+def task_pull_other():
+    """ """
+    file_dep = [
+        "./src/settings.py",
+        "./src/pull_bondret_treasury.py",
+        "./src/pull_CRSP_bond_returns.py",
+        "./src/pull_he_kelly_manela_factors.py"
+        ]
+    file_output = [
+        "ipython ./src/settings.py",
+        "bondret_treasury.csv",
+        "Bondreturns.parquet",
+        "He_Kelly_Manela_Factors_And_Test_Assets_monthly.csv"
+        ]
+    targets = [DATA_DIR / file for file in file_output]
 
-#     return {
-#         "actions": [
-#             "ipython ./src/pull_bloomberg.py",
-#             "ipython ./src/pull_CRSP_Compustat.py",
-#             "ipython ./src/pull_CRSP_stock.py",
-#             "ipython ./src/pull_fed_yield_curve.py",
-#         ],
-#         "targets": targets,
-#         "file_dep": file_dep,
-#         "clean": [],  # Don't clean these files by default.
-#     }
+    return {
+        "actions": [
+            "ipython ./src/pull_bondret_treasury.py",
+            "ipython ./src/pull_CRSP_bond_returns.py",
+            "ipython ./src/pull_he_kelly_manela_factors.py"
+        ],
+        "targets": targets,
+        "file_dep": file_dep,
+        "clean": [],  # Don't clean these files by default.
+    }
 
 
 def task_summary_stats():
@@ -265,6 +264,15 @@ notebook_tasks = {
             OUTPUT_DIR / "rates_relative_to_midpoint.png",
         ],
     },
+    "01_yield_spreads.ipynb": {
+        "file_dep": [
+            "./src/pull_bondret_treasury.py",
+            "./src/pull_CRSP_bond_returns.py",
+            "./src/pull_he_kelly_manela_factors.py"
+        ],
+        "targets": [
+        ],
+    }
 }
 
 
