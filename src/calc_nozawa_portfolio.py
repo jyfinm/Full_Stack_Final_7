@@ -56,6 +56,7 @@ import pull_CRSP_bond_returns
 
 # Configuration
 DATA_DIR = Path(config("DATA_DIR"))
+OUTPUT_DIR = Path(config("OUTPUT_DIR"))
 START_DATE = config("START_DATE")
 END_DATE = config("END_DATE")
 
@@ -225,4 +226,4 @@ if __name__ == "__main__":
     portfolio_returns_fwd, decile_returns_df = calculate_decile_returns(merged)
     
     # Save the decile returns DataFrame (with forward returns) to a parquet file.
-    decile_returns_df.to_parquet(DATA_DIR / "nozawa_decile_returns.parquet")
+    decile_returns_df.to_parquet(OUTPUT_DIR / "nozawa_decile_returns.parquet")

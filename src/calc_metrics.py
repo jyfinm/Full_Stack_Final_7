@@ -22,6 +22,7 @@ from pathlib import Path
 from settings import config
 
 DATA_DIR = Path(config("DATA_DIR"))
+OUTPUT_DIR = Path(config("OUTPUT_DIR"))
 
 def calculate_decile_analysis(decile_returns_df, us_corp_df):
     """
@@ -109,9 +110,9 @@ def calculate_decile_analysis(decile_returns_df, us_corp_df):
 
 if __name__ == "__main__":
     # Define file paths for the input parquet files.
-    decile_returns_path = DATA_DIR / "nozawa_decile_returns.parquet"
+    decile_returns_path = OUTPUT_DIR / "nozawa_decile_returns.parquet"
     us_corp_bonds_path = DATA_DIR / "us_corp_bonds.parquet"
-    output_path = DATA_DIR / "analysis.parquet"
+    output_path = OUTPUT_DIR / "analysis.parquet"
     
     # Load input DataFrames from parquet files.
     decile_returns_df = pd.read_parquet(decile_returns_path)
