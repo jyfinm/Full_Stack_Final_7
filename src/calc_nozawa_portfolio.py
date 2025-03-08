@@ -226,4 +226,3 @@ if __name__ == "__main__":
     
     # Save the decile returns DataFrame (with forward returns) to a parquet file.
     decile_returns_df.to_parquet(DATA_DIR / "nozawa_decile_returns.parquet")
-    print("Decile returns saved to:", DATA_DIR / "nozawa_decile_returns.parquet")
