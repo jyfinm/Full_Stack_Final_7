@@ -95,7 +95,7 @@ def calculate_decile_analysis(decile_returns_df, us_corp_df):
             corr = r2 = slope = intercept = mae = rmse = tracking_error = None
 
         analysis_list.append({
-            "decile": decile,
+            "portfolio": decile,
             "correlation": corr,
             "r_squared": r2,
             "slope": slope,
@@ -107,6 +107,11 @@ def calculate_decile_analysis(decile_returns_df, us_corp_df):
     
     analysis_df = pd.DataFrame(analysis_list)
     return analysis_df
+
+def load_analysis(output_dir=OUTPUT_DIR):
+    path = Path(output_dir) / "analysis.parquet"
+    analysis = pd.read_parquet(path)
+    return analysis
 
 if __name__ == "__main__":
     # Define file paths for the input parquet files.

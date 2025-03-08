@@ -1,3 +1,43 @@
+"""
+This module pulls and processes corporate bond return data from WRDS. It 
+queries the WRDS BONDRET database for selected fields (including CUSIP, date, 
+price, yield, time-to-maturity, amount outstanding, and monthly return) for bonds 
+within a specified date range. The retrieved data is then augmented with a 
+'year' column (extracted from the date) and saved as a parquet file for later use.
+
+Usage:
+    When run as a script, this module connects to WRDS using the provided 
+    credentials and configuration from settings.py, executes the SQL query 
+    defined in `pull_bond_returns()`, and saves the resulting DataFrame to 
+    DATA_DIR / "Bondreturns.parquet".
+
+Configuration:
+    The module retrieves key settings from the project's configuration via 
+    settings.py:
+      - DATA_DIR: Directory where data files are stored.
+      - WRDS_USERNAME: WRDS username for the database connection.
+      - START_DATE: Start date for the query (format YYYY-MM-DD).
+      - END_DATE: End date for the query (format YYYY-MM-DD).
+
+References:
+    - WRDS BONDRET data documentation: https://wrds-www.wharton.upenn.edu/pages/get-data/wrds-bond-returns/
+    - Example code from: https://github.com/zhangruoxikathywork/corporate_bond_liquidity_research/blob/main/src/load_wrds_bondret.py
+
+Functions:
+    - pull_bond_returns(wrds_username, start_date, end_date)
+        Connects to WRDS, queries the BONDRET table for selected fields, and 
+        returns the DataFrame with an additional 'year' column.
+    
+    - load_bondret(data_dir)
+        Loads the saved Bondreturns.parquet file from DATA_DIR.
+    
+    - _demo()
+        A demonstration function to test the load_bondret() function.
+        
+When run as a script, the module executes the pull_bond_returns() function 
+and saves the resulting DataFrame as a parquet file.
+"""
+
 from pathlib import Path
 
 import pandas as pd

@@ -210,6 +210,11 @@ def calculate_decile_returns(merged):
     
     return portfolio_returns_fwd, portfolio_returns_norm
 
+def load_nozawa(output_dir=OUTPUT_DIR):
+    path = Path(output_dir) / "nozawa_decile_returns.parquet"
+    nozawa = pd.read_parquet(path)
+    return nozawa
+
 #############################
 # Main block: Save Decile Returns Parquet
 #############################
