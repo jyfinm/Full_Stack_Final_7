@@ -132,6 +132,62 @@ def split_decile_returns(decile_returns_df, us_corp_df):
     updated_reproduction_df = decile_returns_df[decile_returns_df['date'] > cutoff_date].copy()
     return replication_df, updated_reproduction_df
 
+def plot_cumulative_returns(reproduction_df, save_path=None, show=True):
+    """
+    Plot the cumulative returns for each portfolio in the reproduction DataFrame.
+
+    This function assumes that the input DataFrame contains:
+      - a 'date' column with datetime values,
+      - one or more portfolio return columns representing periodic returns (in decimal form).
+    
+    It computes cumulative returns as:
+        cumulative_return = (1 + r).cumprod() - 1
+    for each portfolio, plots them, and optionally saves the plot to a file.
+
+    Parameters
+    ----------
+    reproduction_df : pd.DataFrame
+        DataFrame containing periodic returns for each portfolio. Must have a 'date' column and
+        portfolio columns (e.g. columns 11, 12, ... 20).
+    save_path : str or Path, optional
+        If provided, the plot is saved to this file.
+    show : bool, optional
+        If True (default), the plot is displayed immediately.
+
+    Returns
+    -------
+    fig : matplotlib.figure.Figure
+        The figure object for the plot.
+    ax : matplotlib.axes.Axes
+        The axes object for the plot.
+    """
+    import matplotlib.pyplot as plt
+
+    # Sort by date and set 'date' as index.
+    df = reproduction_df.sort_values("date").copy()
+    df.set_index("date", inplace=True)
+    
+    # Compute cumulative returns for each portfolio column.
+    cumulative_returns = (1 + df).cumprod() - 1
+    
+    # Plot cumulative returns.
+    fig, ax = plt.subplots(figsize=(10, 6))
+    for col in cumulative_returns.columns:
+        ax.plot(cumulative_returns.index, cumulative_returns[col], label=f"Portfolio {col}")
+    
+    ax.set_xlabel("Date")
+    ax.set_ylabel("Cumulative Return")
+    ax.set_title("Cumulative Return of Each Portfolio")
+    ax.legend(title="Decile")
+    ax.grid(True)
+    
+    if save_path:
+        plt.savefig(save_path)
+    if show:
+        plt.show()
+    
+    return fig, ax
+
 if __name__ == "__main__":
     # Define file paths for input and output.
     decile_returns_path = OUTPUT_DIR / "nozawa_decile_returns.parquet"
