@@ -1,19 +1,24 @@
 """
 calc_metrics.py
 
-This module provides a function to calculate analysis metrics comparing decile portfolio returns
-with benchmark US corporate bond returns.
+This module provides functions to calculate analysis metrics comparing decile portfolio returns
+with benchmark US corporate bond returns, as well as to split the decile returns DataFrame into two 
+separate DataFrames based on a cutoff date. The cutoff date is defined as the last date present in the 
+US corporate bonds DataFrame.
 
-The function `calculate_decile_analysis` merges the decile returns DataFrame and the benchmark US corporate
-bond returns DataFrame on the 'date' column and computes, for each decile (11 to 20):
-  - Pearson correlation between the replicated decile return and the benchmark return,
-  - R² (the square of the correlation),
-  - Regression parameters (slope and intercept) from a simple linear regression of benchmark returns on replication,
-  - Mean Absolute Error (MAE) and Root Mean Squared Error (RMSE),
-  - Tracking error (standard deviation of the difference between benchmark and replicated returns).
+Functions:
+    - calculate_decile_analysis(decile_returns_df, us_corp_df)
+         Calculates correlation, R², regression slope/intercept, MAE, RMSE, and tracking error 
+         for decile returns (for deciles 11-20).
 
-When run as a script, this module loads the necessary parquet files from DATA_DIR, computes the analysis metrics,
-and saves the resulting DataFrame as "analysis.parquet".
+    - split_decile_returns(decile_returns_df, us_corp_df)
+         Splits the decile returns DataFrame into:
+            * replication_df: rows with dates ≤ cutoff date (last date in us_corp_df),
+            * updated_reproduction_df: rows with dates > cutoff date.
+         
+When run as a script, the module loads the necessary parquet files from DATA_DIR and OUTPUT_DIR,
+splits the decile returns, and saves the resulting DataFrames as "nozawa_replication.parquet" and 
+"nozawa_updated_reproduction.parquet". It does not print any additional output.
 """
 
 import numpy as np
@@ -41,7 +46,7 @@ def calculate_decile_analysis(decile_returns_df, us_corp_df):
     -------
     analysis_df : pd.DataFrame
         A DataFrame with one row per decile and columns:
-            - 'decile'
+            - 'portfolio'
             - 'correlation'
             - 'r_squared'
             - 'slope'
@@ -65,29 +70,20 @@ def calculate_decile_analysis(decile_returns_df, us_corp_df):
     
     analysis_list = []
     for decile in range(11, 21):
-        # The decile returns DataFrame now uses integer column names (e.g., 11, 12, ...)
-        ret_col = decile  
-        # The us_corp_df has benchmark columns like "US_bonds_11", "US_bonds_12", etc.
+        ret_col = decile                 # Decile column (as an integer)
         corp_col = "US_bonds_" + str(decile)
         
         if ret_col in common_df.columns and corp_col in common_df.columns:
             sub_df = common_df[[ret_col, corp_col]].dropna()
             if len(sub_df) > 0:
-                # Compute Pearson correlation and R².
                 corr = sub_df[ret_col].corr(sub_df[corp_col])
                 r2 = corr ** 2
-                
-                # Run a simple linear regression (benchmark ~ replication)
                 x = sub_df[ret_col].values
                 y = sub_df[corp_col].values
                 slope, intercept = np.polyfit(x, y, 1)
-                
-                # Compute predicted values and error metrics.
                 y_pred = slope * x + intercept
                 mae = np.mean(np.abs(y - y_pred))
                 rmse = np.sqrt(np.mean((y - y_pred) ** 2))
-                
-                # Tracking error: standard deviation of the difference between benchmark and replication.
                 tracking_error = np.std(y - x)
             else:
                 corr = r2 = slope = intercept = mae = rmse = tracking_error = None
@@ -108,23 +104,53 @@ def calculate_decile_analysis(decile_returns_df, us_corp_df):
     analysis_df = pd.DataFrame(analysis_list)
     return analysis_df
 
-def load_analysis(output_dir=OUTPUT_DIR):
-    path = Path(output_dir) / "analysis.parquet"
-    analysis = pd.read_parquet(path)
-    return analysis
+def split_decile_returns(decile_returns_df, us_corp_df):
+    """
+    Splits the decile returns DataFrame into two parts based on a cutoff date.
+    
+    The cutoff date is defined as the last date present in the US corporate bonds DataFrame.
+    Rows in decile_returns_df with a date on or before the cutoff are placed in the replication sample,
+    while rows with a date after the cutoff are placed in the updated reproduction sample.
+    
+    Parameters
+    ----------
+    decile_returns_df : pd.DataFrame
+        DataFrame containing decile returns with a 'date' column.
+    us_corp_df : pd.DataFrame
+        DataFrame containing benchmark US corporate bond returns with a 'date' column.
+    
+    Returns
+    -------
+    replication_df : pd.DataFrame
+         DataFrame with rows from decile_returns_df where date ≤ cutoff_date.
+    updated_reproduction_df : pd.DataFrame
+         DataFrame with rows from decile_returns_df where date > cutoff_date.
+    """
+    decile_returns_df = decile_returns_df.sort_values("date").reset_index(drop=True)
+    cutoff_date = us_corp_df['date'].max()  # Last date in the benchmark dataset
+    replication_df = decile_returns_df[decile_returns_df['date'] <= cutoff_date].copy()
+    updated_reproduction_df = decile_returns_df[decile_returns_df['date'] > cutoff_date].copy()
+    return replication_df, updated_reproduction_df
 
 if __name__ == "__main__":
-    # Define file paths for the input parquet files.
+    # Define file paths for input and output.
     decile_returns_path = OUTPUT_DIR / "nozawa_decile_returns.parquet"
     us_corp_bonds_path = DATA_DIR / "us_corp_bonds.parquet"
-    output_path = OUTPUT_DIR / "analysis.parquet"
+    analysis_output_path = OUTPUT_DIR / "analysis.parquet"
+    replication_output_path = OUTPUT_DIR / "nozawa_replication.parquet"
+    updated_reproduction_output_path = OUTPUT_DIR / "nozawa_updated_reproduction.parquet"
     
     # Load input DataFrames from parquet files.
     decile_returns_df = pd.read_parquet(decile_returns_path)
     us_corp_df = pd.read_parquet(us_corp_bonds_path)
     
+    # Split decile_returns_df based on the cutoff date (last date in us_corp_df).
+    replication_df, updated_reproduction_df = split_decile_returns(decile_returns_df, us_corp_df)
+    
+    # Save the split DataFrames.
+    replication_df.to_parquet(replication_output_path)
+    updated_reproduction_df.to_parquet(updated_reproduction_output_path)
+    
     # Calculate the analysis metrics.
     analysis_df = calculate_decile_analysis(decile_returns_df, us_corp_df)
-    
-    # Save the analysis DataFrame to a parquet file.
-    analysis_df.to_parquet(output_path)
+    analysis_df.to_parquet(analysis_output_path)
