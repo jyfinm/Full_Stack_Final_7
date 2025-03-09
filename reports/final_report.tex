@@ -39,13 +39,13 @@ We observed that no corporate bonds had a corresponding yield in the first avail
 
 \section{Methodology}
 \subsection{Yield Spread Calculation}
-To calculate the yield spread for each corporate bond, we subtracted the duration-matched YTM (yield to maturity) of the Treasuries (obtained from Open Source Bond Pricing) from the corporate bond yield (obtained from WRDS). We then formed deciles based on these yield spreads each month.
+To calculate the yield spread for each corporate bond, we subtracted the duration-matched YTM (yield to maturity) of the Treasuries (obtained from Open Source Bond Pricing) from the corporate bond yield (obtained from WRDS). We then formed deciles based on these yield spreads each month. Not much other filtering was needed, as Nozawa already filtered according to his own requirements when generating the duration-matched Treasury YTM.
 
 \subsection{Portfolio Construction and Returns}
 After assigning each bond to a decile, we computed the subsequent month’s return for that bond. Each decile’s return was calculated as a weighted average of its constituent bonds’ returns, using the bond’s amount outstanding as the weight. Since no bonds had duration-matched Treasury yields in August 2002, the first month of return replication began in September 2002. The final sample ends in 2012 to match the last available year of the HKM data.
 
 \section{Data Overview}
-In this section, we show a snapshot of the replication sample and the benchmark data. Each table displays the first 10 and last 10 rows of the respective datasets.
+In this section, we show a snapshot of the replication returns and the benchmark returns data. Each table displays the first 10 and last 10 rows of the respective datasets. We also include a time-series plot of the average corporate bond yield and the average duration-matched Treasury yield over the same sample period, highlighting the spread between the two.
 
 \begin{table}[htbp]
 \centering
@@ -72,6 +72,14 @@ In this section, we show a snapshot of the replication sample and the benchmark 
 \caption*{\footnotesize This table provides a similar head/tail snapshot of the benchmark returns from He, Kelly, and Manela (2017). It serves as the comparison point for evaluating our replicated portfolios, restricted to the overlapping 2002--2012 period.}
 \label{table:benchmark}
 \end{table}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=1\textwidth]{\PathToOutput/avg_yield_tr_ytm.png}
+\caption{Average US Corporate Bond Yield and Duration-Matched US Treasury Yield Over Time}
+\caption*{\footnotesize This figure plots the monthly average corporate bond yield and the average duration-matched US Treasury yield from 2002 to 2023. The gap between the two lines illustrates the yield spread driving our decile construction.}
+\label{fig:avg_yield_tr_ytm}
+\end{figure}
 
 \section{Summary Statistics}
 In addition to the decile analysis, we computed summary statistics for both the benchmark and the replicated returns. The tables below present the mean, standard deviation, cumulative return, and the period over which the data are available (start and end dates) for each decile. Although the overall directional trends are similar between the benchmark and replication summaries, small differences in magnitude are evident. These discrepancies likely arise from missing yield data and other data cleaning challenges.

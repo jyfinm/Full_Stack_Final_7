@@ -26,6 +26,7 @@ import pull_he_kelly_manela_factors
 
 import numpy as np
 import pandas as pd
+import matplotlib.pyplot as plt
 import re
 from pathlib import Path
 from settings import config
@@ -235,8 +236,6 @@ def plot_cumulative_returns(reproduction_df, save_path=None, show=True):
     ax : matplotlib.axes.Axes
         The axes object for the plot.
     """
-    import matplotlib.pyplot as plt
-
     # Sort by date and set 'date' as index.
     df = reproduction_df.sort_values("date").copy()
     df.set_index("date", inplace=True)

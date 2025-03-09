@@ -46,6 +46,7 @@ DataFrame (with forward returns) as a parquet file.
 
 import pandas as pd
 import numpy as np
+import matplotlib.pyplot as plt
 from pathlib import Path
 from settings import config
 from misc_tools import *  # For move_columns_to_front and other custom helpers
@@ -222,12 +223,79 @@ def calculate_decile_returns(merged):
     portfolio_returns_norm = portfolio_returns_fwd.copy()
     portfolio_returns_norm["date"] = portfolio_returns_norm["date"] + pd.DateOffset(months=1)
     
+    # Convert column names to strings to avoid mixed-type column names.
+    portfolio_returns_fwd.columns = portfolio_returns_fwd.columns.astype(str)
+    portfolio_returns_norm.columns = portfolio_returns_norm.columns.astype(str)
+    
     return portfolio_returns_fwd, portfolio_returns_norm
+
+#############################
+# 7. Plot simple average bond yields over time
+#############################
+
+def plot_avg_yield_tr_ytm(merged, save_path=None, show=True):
+    """
+    Plot the average 'yield' and average 'tr_ytm_match' over time.
+
+    This function assumes that the input DataFrame contains:
+      - a 'date' column with datetime values,
+      - a 'yield' column containing periodic yield values (in decimal form), and
+      - a 'tr_ytm_match' column containing the corresponding treasury yield (in decimal form).
+    
+    It computes the daily (or monthly) average of these two columns by grouping on the date, and then plots them.
+
+    Parameters
+    ----------
+    merged : pd.DataFrame
+        DataFrame containing at least the columns 'date', 'yield', and 'tr_ytm_match'.
+    save_path : str or Path, optional
+        If provided, the plot is saved to this file.
+    show : bool, optional
+        If True (default), the plot is displayed immediately.
+
+    Returns
+    -------
+    fig : matplotlib.figure.Figure
+        The figure object for the plot.
+    ax : matplotlib.axes.Axes
+        The axes object for the plot.
+    """
+    # Ensure the 'date' column is in datetime format and sort by date.
+    df = merged.copy()
+    df["date"] = pd.to_datetime(df["date"])
+    df = df.sort_values("date")
+    
+    # Group by date and compute the average for 'yield' and 'tr_ytm_match'.
+    avg_df = df.groupby("date")[["yield", "tr_ytm_match"]].mean()
+    
+    # Create the plot.
+    fig, ax = plt.subplots(figsize=(10, 6))
+    ax.plot(avg_df.index, avg_df["yield"], label="Average US Corporate Bond Yield")
+    ax.plot(avg_df.index, avg_df["tr_ytm_match"], label="Average Duration-Matched US Treasury Yield")
+    ax.set_xlabel("Date")
+    ax.set_ylabel("Yield")
+    ax.set_title("Average Yields Over Time")
+    ax.legend()
+    ax.grid(True)
+    fig.tight_layout()
+    
+    if save_path:
+        plt.savefig(save_path)
+    if show:
+        plt.show()
+    
+    return fig, ax
+
 
 def load_nozawa(output_dir=OUTPUT_DIR):
     path = Path(output_dir) / "nozawa_decile_returns.parquet"
     nozawa = pd.read_parquet(path)
     return nozawa
+
+def load_merged_data(output_dir=DATA_DIR):
+    path = Path(output_dir) / "merged_data.parquet"
+    merged_data = pd.read_parquet(path)
+    return merged_data
 
 #############################
 # Main block: Save Decile Returns Parquet
@@ -241,6 +309,8 @@ if __name__ == "__main__":
     # Process all data: this returns proc_open, proc_crsp, and the merged DataFrame.
     open_df, crsp_df, merged = process_all_data(open_df, crsp_df)
     
+    merged.to_parquet(DATA_DIR / "merged_data.parquet")
+
     # Calculate decile returns using the vectorized approach.
     portfolio_returns_fwd, decile_returns_df = calculate_decile_returns(merged)
     
