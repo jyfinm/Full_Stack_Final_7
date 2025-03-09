@@ -1,12 +1,13 @@
 import pandas as pd
 import pytest
 from settings import config
+
 import pull_CRSP_bond_returns
 DATA_DIR = config("DATA_DIR")
-
+WRDS_USERNAME = config("WRDS_USERNAME")
 
 def test_pull_CRSP_bond_returns_functionality():
-    df = pull_CRSP_bond_returns.pull_bond_returns()
+    df = pull_CRSP_bond_returns.pull_bond_returns(start_date="2008-07-01", end_date="2012-07-01")
     # Test if the function returns a pandas DataFrame
     assert isinstance(df, pd.DataFrame)
 
