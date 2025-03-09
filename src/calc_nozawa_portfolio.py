@@ -89,20 +89,34 @@ def process_crsp_bond_data(crsp_df):
     """
     Process the CRSP bond returns data.
     
-    Expected columns: 'date', 'cusip', 'year', 't_yld_pt', 'ret_eom'
+    Expected columns: 'date', 'cusip', 'year', 't_yld_pt', 'ret_eom', and 'yield'
     - Converts 'date' to datetime.
     - Casts 'year' to int.
     - Scales 't_yld_pt' by 1/100.
+    - Forward fills the 'yield' column for each CUSIP.
     - Creates 'cusip_date' (cusip + '_' + formatted date).
     - Sorts by ['cusip', 'date'].
     - Computes a forward return column 'ret_eom_fwd' (shift(-1) for each cusip).
     """
+    # Convert date and cast year
     crsp_df['date'] = pd.to_datetime(crsp_df['date'], format="%Y%m%d")
     crsp_df['year'] = crsp_df['year'].astype(int)
+    
+    # Scale yield (if applicable) - keeping t_yld_pt separate
     crsp_df['t_yld_pt'] = crsp_df['t_yld_pt'] / 100
-    crsp_df['cusip_date'] = crsp_df['cusip'] + '_' + crsp_df['date'].dt.strftime('%Y%m%d')
+    
+    # Sort by CUSIP and date to ensure correct forward filling
     crsp_df = crsp_df.sort_values(by=["cusip", "date"])
+    
+    # Forward fill the 'yield' column within each CUSIP group (NOTE: does not help)
+    # crsp_df['yield'] = crsp_df.groupby("cusip")["yield"].ffill()
+    
+    # Create a unique identifier 'cusip_date'
+    crsp_df['cusip_date'] = crsp_df['cusip'] + '_' + crsp_df['date'].dt.strftime('%Y%m%d')
+    
+    # Compute the forward return for each CUSIP (shift the 'ret_eom' column)
     crsp_df["ret_eom_fwd"] = crsp_df.groupby("cusip")["ret_eom"].shift(-1)
+    
     return crsp_df
 
 #############################
