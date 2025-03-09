@@ -21,6 +21,9 @@ splits the decile returns, and saves the resulting DataFrames as "nozawa_replica
 "nozawa_updated_reproduction.parquet". It does not print any additional output.
 """
 
+import calc_nozawa_portfolio
+import pull_he_kelly_manela_factors
+
 import numpy as np
 import pandas as pd
 from pathlib import Path
@@ -188,17 +191,30 @@ def plot_cumulative_returns(reproduction_df, save_path=None, show=True):
     
     return fig, ax
 
+def load_analysis(output_dir=OUTPUT_DIR):
+    path = Path(output_dir) / "analysis.parquet"
+    analysis_df = pd.read_parquet(path)
+    return analysis_df
+
+def load_reproduction(output_dir=OUTPUT_DIR):
+    path = Path(output_dir) / "nozawa_updated_reproduction.parquet"
+    reproduction = pd.read_parquet(path)
+    return reproduction
+
+def load_replication(output_dir=OUTPUT_DIR):
+    path = Path(output_dir) / "nozawa_replication.parquet"
+    replication = pd.read_parquet(path)
+    return replication
+
 if __name__ == "__main__":
     # Define file paths for input and output.
-    decile_returns_path = OUTPUT_DIR / "nozawa_decile_returns.parquet"
-    us_corp_bonds_path = DATA_DIR / "us_corp_bonds.parquet"
     analysis_output_path = OUTPUT_DIR / "analysis.parquet"
     replication_output_path = OUTPUT_DIR / "nozawa_replication.parquet"
     updated_reproduction_output_path = OUTPUT_DIR / "nozawa_updated_reproduction.parquet"
     
     # Load input DataFrames from parquet files.
-    decile_returns_df = pd.read_parquet(decile_returns_path)
-    us_corp_df = pd.read_parquet(us_corp_bonds_path)
+    decile_returns_df = calc_nozawa_portfolio.load_nozawa(OUTPUT_DIR)
+    us_corp_df = pull_he_kelly_manela_factors.load_us_corp_bonds(DATA_DIR)
     
     # Split decile_returns_df based on the cutoff date (last date in us_corp_df).
     replication_df, updated_reproduction_df = split_decile_returns(decile_returns_df, us_corp_df)

@@ -132,7 +132,10 @@ def process_he_kelly_manela_factors(test_df):
     
     return us_tr_df, us_corp_df
 
-
+def load_us_corp_bonds(data_dir=DATA_DIR):
+    path = Path(data_dir) / "us_corp_bonds.parquet"
+    us_bonds = pd.read_parquet(path)
+    return us_bonds
 
 def _demo():
     """

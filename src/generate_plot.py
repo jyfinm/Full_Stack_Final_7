@@ -16,18 +16,19 @@ import numpy as np
 from matplotlib import pyplot as plt
 import seaborn as sns
 
+OUTPUT_DIR = Path(config("OUTPUT_DIR"))
+
 sns.set()
 
 def main():
-    DATA_DIR = Path(config("DATA_DIR"))
     
     # Load the reproduction DataFrame (updated reproduction sample)
-    reproduction_df = pd.read_parquet(DATA_DIR / "nozawa_updated_reproduction.parquet")
+    reproduction_df = calc_metrics.load_reproduction(OUTPUT_DIR)
     
     # Plot and save the cumulative returns chart.
     fig, ax = calc_metrics.plot_cumulative_returns(
         reproduction_df, 
-        save_path=DATA_DIR / "cumulative_returns.png"
+        save_path=OUTPUT_DIR / "cumulative_returns.png"
     )
 
 if __name__ == "__main__":
