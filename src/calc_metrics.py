@@ -78,17 +78,17 @@ def calculate_decile_analysis(decile_returns_df, us_corp_df):
             - 'r_squared'
             - 'slope'
             - 'intercept'
-            - 'mae'
-            - 'rmse'
+            - 'MAE'
+            - 'RMSE'
             - 'tracking_error'
             
     benchmark_summary_df : pd.DataFrame
         A DataFrame containing summary statistics for each column from the us_corp_df (benchmark)
-        merged into the common dataframe.
+        merged into the common dataframe, plus an overall row.
         
     replicate_summary_df : pd.DataFrame
         A DataFrame containing summary statistics for each column from the decile_returns_df (replication)
-        merged into the common dataframe.
+        merged into the common dataframe, plus an overall row.
     """
     # Convert decile return column names (excluding 'date') to integers if possible.
     cols = decile_returns_df.columns.drop("date")
@@ -103,7 +103,9 @@ def calculate_decile_analysis(decile_returns_df, us_corp_df):
     # Merge the two DataFrames on 'date'
     common_df = pd.merge(decile_returns_df, us_corp_df, on="date", how="inner")
     
-    # Compute decile analysis metrics for deciles 11 through 20.
+    # --------------------------------------------------
+    # 1. Compute decile analysis metrics for deciles 11 through 20.
+    # --------------------------------------------------
     analysis_list = []
     for decile in range(11, 21):
         ret_col = decile                 # Replicate decile column (as an integer)
@@ -139,11 +141,15 @@ def calculate_decile_analysis(decile_returns_df, us_corp_df):
     
     analysis_df = pd.DataFrame(analysis_list)
     
-    # Identify replicate columns (from decile_returns_df) and benchmark columns (from us_corp_df)
+    # --------------------------------------------------
+    # 2. Identify replicate columns (from decile_returns_df) and benchmark columns (from us_corp_df)
+    # --------------------------------------------------
     replicate_cols = [col for col in common_df.columns if col != "date" and isinstance(col, int)]
     benchmark_cols = [col for col in common_df.columns if isinstance(col, str) and col.startswith("US_bonds_")]
     
-    # Calculate summary statistics for replicate columns.
+    # --------------------------------------------------
+    # 3. Calculate summary statistics for replicate columns (one row per decile).
+    # --------------------------------------------------
     replicate_summary_list = []
     for col in replicate_cols:
         series = common_df[col].dropna()
@@ -159,9 +165,11 @@ def calculate_decile_analysis(decile_returns_df, us_corp_df):
         })
     replicate_summary_df = pd.DataFrame(replicate_summary_list)
     
-    # Calculate summary statistics for benchmark columns.
+    # --------------------------------------------------
+    # 4. Calculate summary statistics for benchmark columns (one row per decile).
+    # --------------------------------------------------
     benchmark_summary_list = []
-    for col in benchmark_cols:  # Fixed: iterate over benchmark_cols instead of replicate_cols.
+    for col in benchmark_cols:
         series = common_df[col].dropna()
         mean_val, std_val, cum_ret = calc_summary(series)
         start_date, end_date = get_date_range(common_df, col)
@@ -176,6 +184,68 @@ def calculate_decile_analysis(decile_returns_df, us_corp_df):
             "end_date": end_date
         })
     benchmark_summary_df = pd.DataFrame(benchmark_summary_list)
+    
+    # --------------------------------------------------
+    # 5. Compute overall stats across all replicate columns
+    #    (average across columns for each date, then compute summary).
+    # --------------------------------------------------
+    if replicate_cols:
+        df_repl = common_df[["date"] + replicate_cols].dropna(how="all", subset=replicate_cols).copy()
+        # For each date, compute the average across replicate columns, forming a single time series.
+        df_repl["avg_replicate"] = df_repl[replicate_cols].mean(axis=1)
+        mean_val, std_val, cum_ret = calc_summary(df_repl["avg_replicate"].dropna())
+        # We take the earliest date with non-NA and the latest date with non-NA in that single series.
+        df_repl_non_na = df_repl.dropna(subset=["avg_replicate"])
+        if not df_repl_non_na.empty:
+            start_date_overall = df_repl_non_na["date"].iloc[0]
+            end_date_overall = df_repl_non_na["date"].iloc[-1]
+        else:
+            start_date_overall = None
+            end_date_overall = None
+        
+        # Append the row to replicate_summary_df
+        replicate_summary_df = pd.concat([
+            replicate_summary_df,
+            pd.DataFrame([{
+                "portfolio": "Overall",
+                "mean": mean_val,
+                "std": std_val,
+                "cumulative_return": cum_ret,
+                "start_date": start_date_overall,
+                "end_date": end_date_overall
+            }])
+        ], ignore_index=True)
+    
+    # --------------------------------------------------
+    # 6. Compute overall stats across all benchmark columns
+    #    (average across columns for each date, then compute summary).
+    # --------------------------------------------------
+    if benchmark_cols:
+        df_bench = common_df[["date"] + benchmark_cols].dropna(how="all", subset=benchmark_cols).copy()
+        df_bench["avg_benchmark"] = df_bench[benchmark_cols].mean(axis=1)
+        mean_val, std_val, cum_ret = calc_summary(df_bench["avg_benchmark"].dropna())
+        df_bench_non_na = df_bench.dropna(subset=["avg_benchmark"])
+        if not df_bench_non_na.empty:
+            start_date_overall = df_bench_non_na["date"].iloc[0]
+            end_date_overall = df_bench_non_na["date"].iloc[-1]
+        else:
+            start_date_overall = None
+            end_date_overall = None
+        
+        benchmark_summary_df = pd.concat([
+            benchmark_summary_df,
+            pd.DataFrame([{
+                "portfolio": "Overall",
+                "mean": mean_val,
+                "std": std_val,
+                "cumulative_return": cum_ret,
+                "start_date": start_date_overall,
+                "end_date": end_date_overall
+            }])
+        ], ignore_index=True)
+    
+    benchmark_summary_df["portfolio"] = benchmark_summary_df["portfolio"].astype(str)
+    replicate_summary_df["portfolio"] = replicate_summary_df["portfolio"].astype(str)
     
     return analysis_df, benchmark_summary_df, replicate_summary_df
 
