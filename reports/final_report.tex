@@ -1,6 +1,7 @@
 % !TeX root = final_report.tex
 \newcommand*{\PathToAssets}{../assets}%
 \newcommand*{\PathToOutput}{../_output}%
+\newcommand{\currentyear}{\the\year}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% This file is compiled with XeLaTeX.
@@ -143,7 +144,8 @@ Despite missing yield data and necessary data cleaning (e.g., handling negative 
 Our replication of Nozawa’s corporate bond portfolios from He, Kelly, and Manela (2017) shows strong alignment in direction and decile ranking during the overlapping 2002--2012 window. The combination of WRDS corporate bond data and Nozawa’s duration-matched Treasury yields allowed us to construct yield spreads and subsequent returns starting in September 2002. Key challenges included missing yield data, negative amounts outstanding, and limited data coverage relative to the broader 1970--2012 HKM sample. Overall, however, the high correlations, low error measures, and similar decile trajectories indicate a largely successful replication effort, even though slight differences in summary statistics point to some inherent data challenges.
 
 \newpage
-\bibliographystyle{plainnat} % You can change this to another style if preferred
-\bibliography{../bibliography} % Adjust path as needed
+\nocite{*}
+\bibliographystyle{chicago} % You can change this to another style if preferred
+\bibliography{bibliography.bib} % Adjust path as needed
 
 \end{document}

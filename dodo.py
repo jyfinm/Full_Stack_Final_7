@@ -76,7 +76,7 @@ environ["PYDEVD_DISABLE_FILE_VALIDATION"] = "1"
 def jupyter_execute_notebook(notebook):
     return f"jupyter nbconvert --execute --to notebook --ClearMetadataPreprocessor.enabled=True --log-level WARN --inplace ./src/{notebook}.ipynb"
 def jupyter_to_html(notebook, output_dir=OUTPUT_DIR):
-    return f"jupyter nbconvert --to html --log-level WARN --output-dir={output_dir} ./src/{notebook}.ipynb"
+    return f"jupyter nbconvert --to html --log-level ERROR --output-dir={output_dir} ./src/{notebook}.ipynb"
 def jupyter_to_md(notebook, output_dir=OUTPUT_DIR):
     """Requires jupytext"""
     return f"jupytext --to markdown --log-level WARN --output-dir={output_dir} ./src/{notebook}.ipynb"
