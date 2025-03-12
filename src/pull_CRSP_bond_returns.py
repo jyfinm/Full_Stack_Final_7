@@ -116,7 +116,7 @@ def pull_bond_returns(wrds_username=WRDS_USERNAME, start_date=START_DATE, end_da
 
 
 def load_bondret(data_dir=DATA_DIR):
-    path = Path(data_dir) / "Bondreturns.parquet"
+    path = Path(data_dir) / "CRSP_bond_returns.parquet"
     bond = pd.read_parquet(path)
     return bond
 
@@ -127,4 +127,4 @@ def _demo():
 
 if __name__ == "__main__":
    comp = pull_bond_returns(wrds_username=WRDS_USERNAME)
-   comp.to_parquet(DATA_DIR / "Bondreturns.parquet")
+   comp.to_parquet(DATA_DIR / "CRSP_bond_returns.parquet")

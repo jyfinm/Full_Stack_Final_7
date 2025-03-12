@@ -35,7 +35,7 @@ This project aims to reproduce the corporate bond decile portfolios sorted by yi
 While He, Kelly, and Manela (HKM) originally span 1970--2012, the duration‐matched Treasury dataset starts in 2002 and continues through 2023. Consequently, the only overlapping interval between the HKM dataset and Nozawa’s updated duration‐matched data is roughly 2002--2012, restricting our replication to that period.
 
 \subsection{Data Coverage and Challenges}
-We observed that no corporate bonds had a corresponding yield in the first available month (August 2002) to compare with the duration-matched Treasury yield, so we started our replication from September 2002 onward. In other months, missing yield data occurred because some bonds had no trading volume; we were unable to calculate yields for those bonds given the limited methodological guidance in the literature. Forward-filling the yields did not help; it in fact made it worse. Additionally, some bonds exhibited negative amounts outstanding, which required data cleaning. As a result, while the replicated portfolios follow the overall direction and trend of the benchmark from 2002 to 2012, exact numerical matching was not achieved.
+We observed that no corporate bonds had a corresponding yield in the first available month (August 2002) to compare with the duration-matched Treasury yield, so we started our replication from September 2002 onward. In other months, missing yield data occurred because some bonds had no trading volume; we were unable to calculate yields for those bonds given the limited methodological guidance in the literature. Forward-filling the yields did not help; it in fact made our replication worse. Additionally, some bonds exhibited negative amounts outstanding, which required data cleaning. As a result, while the replicated portfolios follow the overall direction and trend of the benchmark from 2002 to 2012, exact numerical matching was not achieved.
 
 \section{Methodology}
 \subsection{Yield Spread Calculation}
@@ -141,5 +141,9 @@ Despite missing yield data and necessary data cleaning (e.g., handling negative 
 
 \section{Conclusion}
 Our replication of Nozawa’s corporate bond portfolios from He, Kelly, and Manela (2017) shows strong alignment in direction and decile ranking during the overlapping 2002--2012 window. The combination of WRDS corporate bond data and Nozawa’s duration-matched Treasury yields allowed us to construct yield spreads and subsequent returns starting in September 2002. Key challenges included missing yield data, negative amounts outstanding, and limited data coverage relative to the broader 1970--2012 HKM sample. Overall, however, the high correlations, low error measures, and similar decile trajectories indicate a largely successful replication effort, even though slight differences in summary statistics point to some inherent data challenges.
+
+\newpage
+\bibliographystyle{apalike} % You can change this to another style if preferred
+\bibliography{../bibliography} % Adjust path as needed
 
 \end{document}

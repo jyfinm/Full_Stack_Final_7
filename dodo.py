@@ -150,7 +150,7 @@ def task_config():
 ##############################$
 ## Demo: Other misc. data pulls
 ##############################$
-def task_pull_other():
+def task_pull_all():
     """ """
     file_dep = [
         "./src/settings.py",
@@ -161,7 +161,7 @@ def task_pull_other():
     file_output = [
         "ipython ./src/settings.py",
         "bondret_treasury.csv",
-        "Bondreturns.parquet",
+        "CRSP_bond_returns.parquet",
         "He_Kelly_Manela_Factors_And_Test_Assets_monthly.csv"
         ]
     targets = [DATA_DIR / file for file in file_output]
@@ -177,7 +177,7 @@ def task_pull_other():
         "clean": [],  # Don't clean these files by default.
     }
 
-def task_calc_nozawa():
+def task_calc_nozawa_portfolio_and_metrics():
     file_dep = [
         "./src/calc_nozawa_portfolio.py",
         "./src/calc_metrics.py"
@@ -313,7 +313,9 @@ notebook_tasks = {
         "file_dep": [
             "./src/pull_bondret_treasury.py",
             "./src/pull_CRSP_bond_returns.py",
-            "./src/pull_he_kelly_manela_factors.py"
+            "./src/pull_he_kelly_manela_factors.py",
+            "./src/calc_nozawa_portfolio.py",
+            "./src/calc_metrics.py"
         ],
         "targets": [
         ],
@@ -360,6 +362,12 @@ def task_run_notebooks():
                     OUTPUT_DIR / f"{notebook_name}.ipynb",
                     mkdir=True,
                 ),
+                # This is to set up Sphinx without chartbook
+                copy_file(
+                    Path("./src") / f"{notebook_name}.ipynb",
+                    Path("./_docs/notebooks/") / f"{notebook_name}.ipynb",
+                    mkdir=True,
+                ),
                 jupyter_clear_output(notebook_name),
                 # jupyter_to_python(notebook_name, build_dir),
                 """python -c "import sys; from datetime import datetime; print(f'End """ + notebook + """: {datetime.now()}', file=sys.stderr)" """,
@@ -383,81 +391,143 @@ def task_run_notebooks():
 # ###############################################################
 
 
-# def task_compile_latex_docs():
-#     """Compile the LaTeX documents to PDFs"""
-#     file_dep = [
-#         "./reports/report_example.tex",
-#         "./reports/my_article_header.sty",
-#         "./reports/slides_example.tex",
-#         "./reports/my_beamer_header.sty",
-#         "./reports/my_common_header.sty",
-#         "./reports/report_simple_example.tex",
-#         "./reports/slides_simple_example.tex",
-#         "./src/example_plot.py",
-#         "./src/example_table.py",
-#     ]
-#     targets = [
-#         "./reports/report_example.pdf",
-#         "./reports/slides_example.pdf",
-#         "./reports/report_simple_example.pdf",
-#         "./reports/slides_simple_example.pdf",
-#     ]
+def task_compile_latex_docs():
+    """Compile the LaTeX documents to PDFs"""
+    file_dep = [
+        "./reports/final_report.tex",
+#        "./reports/report_example.tex",
+        "./reports/my_article_header.sty",
+#        "./reports/slides_example.tex",
+        "./reports/my_beamer_header.sty",
+        "./reports/my_common_header.sty",
+#        "./reports/report_simple_example.tex",
+#        "./reports/slides_simple_example.tex",
+        "./src/generate_plot.py",
+        "./src/generate_table.py",
+    ]
+    targets = [
+        "./reports/final_report.pdf",
+        # "./reports/report_example.pdf",
+        # "./reports/slides_example.pdf",
+        # "./reports/report_simple_example.pdf",
+        # "./reports/slides_simple_example.pdf",
+    ]
 
-#     return {
-#         "actions": [
-#             # My custom LaTeX templates
-#             "latexmk -xelatex -halt-on-error -cd ./reports/report_example.tex",  # Compile
-#             "latexmk -xelatex -halt-on-error -c -cd ./reports/report_example.tex",  # Clean
-#             "latexmk -xelatex -halt-on-error -cd ./reports/slides_example.tex",  # Compile
-#             "latexmk -xelatex -halt-on-error -c -cd ./reports/slides_example.tex",  # Clean
-#             # Simple templates based on small adjustments to Overleaf templates
-#             "latexmk -xelatex -halt-on-error -cd ./reports/report_simple_example.tex",  # Compile
-#             "latexmk -xelatex -halt-on-error -c -cd ./reports/report_simple_example.tex",  # Clean
-#             "latexmk -xelatex -halt-on-error -cd ./reports/slides_simple_example.tex",  # Compile
-#             "latexmk -xelatex -halt-on-error -c -cd ./reports/slides_simple_example.tex",  # Clean
-#             #
-#             # Example of compiling and cleaning in another directory. This often fails, so I don't use it
-#             # f"latexmk -xelatex -halt-on-error -cd -output-directory=../_output/ ./reports/report_example.tex",  # Compile
-#             # f"latexmk -xelatex -halt-on-error -c -cd -output-directory=../_output/ ./reports/report_example.tex",  # Clean
-#         ],
-#         "targets": targets,
-#         "file_dep": file_dep,
-#         "clean": True,
-#     }
+    return {
+        "actions": [
+            # My custom LaTeX templates
+            "latexmk -xelatex -halt-on-error -cd ./reports/final_report.tex",  # Compile
+            "latexmk -xelatex -halt-on-error -c -cd ./reports/final_report.tex",  # Clean
+            # "latexmk -xelatex -halt-on-error -cd ./reports/report_example.tex",  # Compile
+            # "latexmk -xelatex -halt-on-error -c -cd ./reports/report_example.tex",  # Clean
+            # "latexmk -xelatex -halt-on-error -cd ./reports/slides_example.tex",  # Compile
+            # "latexmk -xelatex -halt-on-error -c -cd ./reports/slides_example.tex",  # Clean
+            # Simple templates based on small adjustments to Overleaf templates
+            # "latexmk -xelatex -halt-on-error -cd ./reports/report_simple_example.tex",  # Compile
+            # "latexmk -xelatex -halt-on-error -c -cd ./reports/report_simple_example.tex",  # Clean
+            # "latexmk -xelatex -halt-on-error -cd ./reports/slides_simple_example.tex",  # Compile
+            # "latexmk -xelatex -halt-on-error -c -cd ./reports/slides_simple_example.tex",  # Clean
+            #
+            # Example of compiling and cleaning in another directory. This often fails, so I don't use it
+            # f"latexmk -xelatex -halt-on-error -cd -output-directory=../_output/ ./reports/report_example.tex",  # Compile
+            # f"latexmk -xelatex -halt-on-error -c -cd -output-directory=../_output/ ./reports/report_example.tex",  # Clean
+        ],
+        "targets": targets,
+        "file_dep": file_dep,
+        "clean": True,
+    }
 
-# notebook_sphinx_pages = [
-#     "./docs/notebooks/EX_" + notebook.split(".")[0] + ".html"
-#     for notebook in notebook_tasks.keys()
-# ]
-# sphinx_targets = [
-#     "./docs/index.html",
-#     "./docs/myst_markdown_demos.html",
-#     "./docs/apidocs/index.html",
-#     *notebook_sphinx_pages,
-# ]
+notebook_sphinx_pages = [
+    "./_docs/notebooks/" + notebook.split(".")[0] + ".html"
+    for notebook in notebook_tasks.keys()
+]
+sphinx_targets = [
+    "./_docs/index.html",
+    "./_docs/README.html",
+    "./_docs/apidocs/index.html",
+    *notebook_sphinx_pages,
+]
 
-# def task_compile_sphinx_docs():
-#     """Compile Sphinx Docs"""
-#     notebook_scripts = [
-#         OUTPUT_DIR / ("_" + notebook.split(".")[0] + ".py")
-#         for notebook in notebook_tasks.keys()
-#     ]
-#     file_dep = [
-#         "./README.md",
-#         "./pipeline.json",
-#         *notebook_scripts,
-#     ]
+def copy_docs_src_to_docs():
+    """
+    Copy all files and subdirectories from the docs_src directory to the _docs directory.
+    This function loops through all files in docs_src and copies them individually to _docs,
+    preserving the directory structure. It does not delete the contents of _docs beforehand.
+    """
+    src = Path("docs_src")
+    dst = Path("_docs")
 
-#     return {
-#         "actions": [
-#             "chartbook generate -f",
-#         ],  # Use docs as build destination
-#         # "actions": ["sphinx-build -M html ./docs/ ./docs/_build"], # Previous standard organization
-#         "targets": sphinx_targets,
-#         "file_dep": file_dep,
-#         "task_dep": ["run_notebooks",],
-#         "clean": True,
-#     }
+    # Ensure the destination directory exists
+    dst.mkdir(parents=True, exist_ok=True)
+    
+    # Explicitly copy README.md from the root directory
+    shutil.copy2(Path("README.md"), dst / "README.md")
+    
+    # Loop through all files and directories in docs_src
+    for item in src.rglob("*"):
+        if any("examples" in part for part in item.parts):
+            continue  
+        relative_path = item.relative_to(src)
+        target = dst / relative_path
+        if item.is_dir():
+            target.mkdir(parents=True, exist_ok=True)
+        else:
+            shutil.copy2(item, target)
+
+
+def copy_docs_build_to_docs():
+    """
+    Copy all files and subdirectories from _docs/_build/html to docs.
+    This function copies each file individually while preserving the directory structure.
+    It does not delete any existing contents in docs.
+    After copying, it creates an empty .nojekyll file in the docs directory.
+    """
+    src = Path("_docs/_build/html")
+    dst = Path("docs")
+    dst.mkdir(parents=True, exist_ok=True)
+
+    # Loop through all files and directories in src
+    for item in src.rglob("*"):
+        
+        relative_path = item.relative_to(src)
+        target = dst / relative_path
+        if item.is_dir():
+            target.mkdir(parents=True, exist_ok=True)
+        else:
+            target.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copy2(item, target)
+
+    # Touch an empty .nojekyll file in the docs directory.
+    (dst / ".nojekyll").touch()
+
+def task_compile_sphinx_docs():
+    """Compile Sphinx Docs"""
+    notebook_scripts = [
+        OUTPUT_DIR / ("_" + notebook.split(".")[0] + ".py")
+        for notebook in notebook_tasks.keys()
+    ]
+    file_dep = [
+        "./docs_src/conf.py",
+        "./docs_src/index.md",
+        "./README.md",
+#        "./pipeline.json", # This file is where chartbook is ran to generate site
+        *notebook_scripts,
+    ]
+
+    return {
+        # "actions": [
+        #     "chartbook generate -f",
+        # ],  # Use docs as build destination
+        "actions": [
+            copy_docs_src_to_docs,
+            "sphinx-build -M html ./_docs/ ./_docs/_build",
+            copy_docs_build_to_docs,
+        ], # Previous standard organization
+        "targets": sphinx_targets,
+        "file_dep": file_dep,
+        "task_dep": ["run_notebooks",],
+        "clean": True,
+    }
 
 
 ###############################################################
