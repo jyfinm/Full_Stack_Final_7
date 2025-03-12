@@ -395,6 +395,7 @@ def task_compile_latex_docs():
     """Compile the LaTeX documents to PDFs"""
     file_dep = [
         "./reports/final_report.tex",
+        "./reports/bibliography.bib",
 #        "./reports/report_example.tex",
         "./reports/my_article_header.sty",
 #        "./reports/slides_example.tex",
@@ -416,6 +417,10 @@ def task_compile_latex_docs():
     return {
         "actions": [
             # My custom LaTeX templates
+            #"latexmk -xelatex -halt-on-error -cd ./reports/final_report.tex", 
+            #"touch ./reports/bibliography.bib",
+            #"touch ./reports/final_report.tex",
+            #"bibtex ./reports/final_report",
             "latexmk -xelatex -halt-on-error -cd ./reports/final_report.tex",  # Compile
             "latexmk -xelatex -halt-on-error -c -cd ./reports/final_report.tex",  # Clean
             # "latexmk -xelatex -halt-on-error -cd ./reports/report_example.tex",  # Compile
