@@ -39,8 +39,8 @@ def test_calculate_decile_returns():
     assert "date" in portfolio_returns_fwd.columns, "The output should have a 'date' column."
     
     # Check that decile columns (11 and 12) exist
-    assert 11 in portfolio_returns_fwd.columns, "Decile 11 should be a column."
-    assert 12 in portfolio_returns_fwd.columns, "Decile 12 should be a column."
+    assert '11' in portfolio_returns_fwd.columns, "Decile 11 should be a column."
+    assert '12' in portfolio_returns_fwd.columns, "Decile 12 should be a column."
     
     # Check that the number of rows equals number of unique dates minus one (last date dropped)
     unique_dates = merged["date"].nunique()
