@@ -33,7 +33,8 @@ def main():
     # Plot and save the cumulative returns chart.
     fig, ax = calc_metrics.plot_cumulative_returns(
         reproduction_df, 
-        save_path=OUTPUT_DIR / "cumulative_returns.png"
+        save_path=OUTPUT_DIR / "cumulative_returns.png",
+        show=False
     )
     
     # Load the merged bond data (assumed to be stored as "merged_bond_data.parquet")
@@ -42,7 +43,8 @@ def main():
     # Plot and save the average yield and average tr_ytm_match chart.
     fig2, ax2 = calc_nozawa_portfolio.plot_avg_yield_tr_ytm(
         merged,
-        save_path=OUTPUT_DIR / "avg_yield_tr_ytm.png"
+        save_path=OUTPUT_DIR / "avg_yield_tr_ytm.png",
+        show=False
     )
 
 if __name__ == "__main__":
