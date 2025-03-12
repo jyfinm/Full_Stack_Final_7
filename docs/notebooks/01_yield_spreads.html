@@ -1,0 +1,1763 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Replicating the Nozawa Corporate Bond Portfolios from He, Kelly, and Manela (2017) &#8212; Full-Stack Quantitative Finance Final Project #7</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=a3416100" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../_static/documentation_options.js?v=b9472d72"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'notebooks/01_yield_spreads';</script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="API Reference" href="../apidocs/index.html" />
+    <link rel="prev" title="Full-Stack Quantitative Finance Final Project 7: Replicating the Nozawa Corporate Bond Portfolios from He, Kelly, and Manela (2017)" href="../index.html" /> 
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>   
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/logo.png" class="logo__image only-light" alt="Full-Stack Quantitative Finance Final Project #7 - Home"/>
+    <script>document.write(`<img src="../_static/logo.png" class="logo__image only-dark" alt="Full-Stack Quantitative Finance Final Project #7 - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../index.html">
+                    Full-Stack Quantitative Finance Final Project 7: Replicating the Nozawa Corporate Bond Portfolios from He, Kelly, and Manela (2017)
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Notebooks 📖</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Replicating the Nozawa Corporate Bond Portfolios from He, Kelly, and Manela (2017)</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Documentation 📜</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../apidocs/index.html">API Reference</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../apidocs/calc_metrics/calc_metrics.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">calc_metrics</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../apidocs/calc_nozawa_portfolio/calc_nozawa_portfolio.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">calc_nozawa_portfolio</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../apidocs/generate_plot/generate_plot.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">generate_plot</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../apidocs/generate_table/generate_table.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">generate_table</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../apidocs/misc_tools/misc_tools.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">misc_tools</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../apidocs/pull_bondret_treasury/pull_bondret_treasury.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">pull_bondret_treasury</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../apidocs/pull_CRSP_bond_returns/pull_CRSP_bond_returns.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">pull_CRSP_bond_returns</span></code></a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Appendix 💡</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../README.html">Example Project Using the ChartBook Template</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/jyfinm/Full_Stack_Final_7" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/jyfinm/Full_Stack_Final_7/issues/new?title=Issue%20on%20page%20%2Fnotebooks/01_yield_spreads.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../_sources/notebooks/01_yield_spreads.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Replicating the Nozawa Corporate Bond Portfolios from He, Kelly, and Manela (2017)</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#imports">Imports</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data-processing">Data Processing</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#analysis">Analysis</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#decile-replication-analysis">Decile Replication Analysis</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#key-observations">Key Observations</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#overall-assessment">Overall Assessment</a></li>
+</ul>
+</li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                   <section class="tex2jax_ignore mathjax_ignore" id="replicating-the-nozawa-corporate-bond-portfolios-from-he-kelly-and-manela-2017">
+<h1>Replicating the Nozawa Corporate Bond Portfolios from He, Kelly, and Manela (2017)<a class="headerlink" href="#replicating-the-nozawa-corporate-bond-portfolios-from-he-kelly-and-manela-2017" title="Link to this heading">#</a></h1>
+<section id="imports">
+<h2>Imports<a class="headerlink" href="#imports" title="Link to this heading">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">pull_bondret_treasury</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pull_CRSP_bond_returns</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pull_he_kelly_manela_factors</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">calc_nozawa_portfolio</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">calc_metrics</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">misc_tools</span><span class="w"> </span><span class="kn">import</span> <span class="o">*</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">settings</span><span class="w"> </span><span class="kn">import</span> <span class="n">config</span>
+
+<span class="n">OUTPUT_DIR</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">config</span><span class="p">(</span><span class="s2">&quot;OUTPUT_DIR&quot;</span><span class="p">))</span>
+<span class="n">DATA_DIR</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">config</span><span class="p">(</span><span class="s2">&quot;DATA_DIR&quot;</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="data-processing">
+<h2>Data Processing<a class="headerlink" href="#data-processing" title="Link to this heading">#</a></h2>
+<p>Here, we load the data and process it:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">open_df</span> <span class="o">=</span> <span class="n">pull_bondret_treasury</span><span class="o">.</span><span class="n">load_bondret_treasury_file</span><span class="p">(</span><span class="n">data_dir</span><span class="o">=</span><span class="n">DATA_DIR</span><span class="p">)</span>
+<span class="n">crsp_df</span> <span class="o">=</span> <span class="n">pull_CRSP_bond_returns</span><span class="o">.</span><span class="n">load_bondret</span><span class="p">(</span><span class="n">data_dir</span><span class="o">=</span><span class="n">DATA_DIR</span><span class="p">)</span>
+<span class="n">open_df</span><span class="p">,</span> <span class="n">crsp_df</span><span class="p">,</span> <span class="n">merged</span> <span class="o">=</span> <span class="n">calc_nozawa_portfolio</span><span class="o">.</span><span class="n">process_all_data</span><span class="p">(</span><span class="n">open_df</span><span class="p">,</span> <span class="n">crsp_df</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">merge_stats</span><span class="p">(</span><span class="n">crsp_df</span><span class="p">,</span> <span class="n">open_df</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;cusip_date&#39;</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>union                 3.749509e+06
+intersection          2.380982e+06
+union-intersection    1.368527e+06
+intersection/union    6.350117e-01
+left                  3.749151e+06
+right                 2.381340e+06
+left-intersection     1.368169e+06
+right-intersection    3.580000e+02
+intersection/left     6.350723e-01
+intersection/right    9.998497e-01
+dtype: float64
+</pre></div>
+</div>
+</div>
+</div>
+<p>The data processing also generates the deciles for the 10 corresponding corporate bond portfolios per Nozawa (2017) used by He, Kelly, and Manela (2017).</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">merged</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>date</th>
+      <th>cusip</th>
+      <th>cusip_date</th>
+      <th>price_eom</th>
+      <th>tmt</th>
+      <th>amount_outstanding</th>
+      <th>yield</th>
+      <th>t_yld_pt</th>
+      <th>ret_eom</th>
+      <th>year</th>
+      <th>ret_eom_fwd</th>
+      <th>tr_return</th>
+      <th>tr_ytm_match</th>
+      <th>tau</th>
+      <th>yield_spread</th>
+      <th>TTM_diff</th>
+      <th>decile</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>2002-08-31</td>
+      <td>000336AE7</td>
+      <td>000336AE7_20020831</td>
+      <td>97.693000</td>
+      <td>5.836111</td>
+      <td>100000.0</td>
+      <td>0.073689</td>
+      <td>0.069180</td>
+      <td>-0.008212</td>
+      <td>2002.0</td>
+      <td>-0.054689</td>
+      <td>0.018357</td>
+      <td>0.034521</td>
+      <td>5.756164</td>
+      <td>0.039168</td>
+      <td>0.079947</td>
+      <td>17</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>2002-08-31</td>
+      <td>61688AAT5</td>
+      <td>61688AAT5_20020831</td>
+      <td>100.000000</td>
+      <td>10.602778</td>
+      <td>0.0</td>
+      <td>0.064986</td>
+      <td>0.065230</td>
+      <td>0.009171</td>
+      <td>2002.0</td>
+      <td>NaN</td>
+      <td>0.024485</td>
+      <td>0.044359</td>
+      <td>10.457534</td>
+      <td>0.020627</td>
+      <td>0.145244</td>
+      <td>15</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>2002-08-31</td>
+      <td>35180PAJ1</td>
+      <td>35180PAJ1_20020831</td>
+      <td>107.652000</td>
+      <td>1.391667</td>
+      <td>50000.0</td>
+      <td>0.023921</td>
+      <td>0.028391</td>
+      <td>0.003693</td>
+      <td>2002.0</td>
+      <td>0.014349</td>
+      <td>0.004313</td>
+      <td>0.026890</td>
+      <td>1.372603</td>
+      <td>-0.002969</td>
+      <td>0.019064</td>
+      <td>11</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>2002-08-31</td>
+      <td>59018SB94</td>
+      <td>59018SB94_20020831</td>
+      <td>15.000000</td>
+      <td>25.925000</td>
+      <td>250000.0</td>
+      <td>0.075921</td>
+      <td>0.087870</td>
+      <td>0.119403</td>
+      <td>2002.0</td>
+      <td>-0.016667</td>
+      <td>0.112466</td>
+      <td>0.054729</td>
+      <td>25.569863</td>
+      <td>0.021192</td>
+      <td>0.355137</td>
+      <td>15</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>2002-08-31</td>
+      <td>078149DL2</td>
+      <td>078149DL2_20020831</td>
+      <td>108.900000</td>
+      <td>3.636111</td>
+      <td>200000.0</td>
+      <td>0.050020</td>
+      <td>0.052524</td>
+      <td>0.062122</td>
+      <td>2002.0</td>
+      <td>-0.020361</td>
+      <td>0.016789</td>
+      <td>0.027798</td>
+      <td>3.586301</td>
+      <td>0.022221</td>
+      <td>0.049810</td>
+      <td>15</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>1739754</th>
+      <td>2023-12-31</td>
+      <td>12572QAH8</td>
+      <td>12572QAH8_20231231</td>
+      <td>91.679439</td>
+      <td>24.813889</td>
+      <td>700000.0</td>
+      <td>0.047270</td>
+      <td>0.049869</td>
+      <td>0.070444</td>
+      <td>2023.0</td>
+      <td>NaN</td>
+      <td>0.089751</td>
+      <td>0.041155</td>
+      <td>24.473973</td>
+      <td>0.006115</td>
+      <td>0.339916</td>
+      <td>13</td>
+    </tr>
+    <tr>
+      <th>1739755</th>
+      <td>2023-12-31</td>
+      <td>74432QCF0</td>
+      <td>74432QCF0_20231231</td>
+      <td>79.868897</td>
+      <td>27.594444</td>
+      <td>1500000.0</td>
+      <td>0.050725</td>
+      <td>0.052086</td>
+      <td>0.090931</td>
+      <td>2023.0</td>
+      <td>NaN</td>
+      <td>0.087956</td>
+      <td>0.041417</td>
+      <td>27.216438</td>
+      <td>0.009309</td>
+      <td>0.378006</td>
+      <td>15</td>
+    </tr>
+    <tr>
+      <th>1739756</th>
+      <td>2023-12-31</td>
+      <td>615369AW5</td>
+      <td>615369AW5_20231231</td>
+      <td>83.558000</td>
+      <td>7.744444</td>
+      <td>600000.0</td>
+      <td>0.045734</td>
+      <td>0.048596</td>
+      <td>0.045403</td>
+      <td>2023.0</td>
+      <td>NaN</td>
+      <td>0.040806</td>
+      <td>0.038507</td>
+      <td>7.638356</td>
+      <td>0.007227</td>
+      <td>0.106088</td>
+      <td>14</td>
+    </tr>
+    <tr>
+      <th>1739757</th>
+      <td>2023-12-31</td>
+      <td>260543BJ1</td>
+      <td>260543BJ1_20231231</td>
+      <td>113.136560</td>
+      <td>5.922222</td>
+      <td>778773.0</td>
+      <td>0.047691</td>
+      <td>0.050695</td>
+      <td>0.028184</td>
+      <td>2023.0</td>
+      <td>NaN</td>
+      <td>0.026762</td>
+      <td>0.038741</td>
+      <td>5.841096</td>
+      <td>0.008951</td>
+      <td>0.081126</td>
+      <td>15</td>
+    </tr>
+    <tr>
+      <th>1739758</th>
+      <td>2023-12-31</td>
+      <td>037833EN6</td>
+      <td>037833EN6_20231231</td>
+      <td>95.846744</td>
+      <td>5.686111</td>
+      <td>1000000.0</td>
+      <td>0.040830</td>
+      <td>0.043119</td>
+      <td>0.026868</td>
+      <td>2023.0</td>
+      <td>NaN</td>
+      <td>0.027804</td>
+      <td>0.038627</td>
+      <td>5.608219</td>
+      <td>0.002204</td>
+      <td>0.077892</td>
+      <td>11</td>
+    </tr>
+  </tbody>
+</table>
+<p>1739759 rows × 17 columns</p>
+</div></div></div>
+</div>
+<p>Now, we can calculate the returns weighted by amount outstanding for each decile:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">portfolio_returns_fwd</span><span class="p">,</span> <span class="n">decile_returns_df</span> <span class="o">=</span> <span class="n">calc_nozawa_portfolio</span><span class="o">.</span><span class="n">calculate_decile_returns</span><span class="p">(</span><span class="n">merged</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="analysis">
+<h2>Analysis<a class="headerlink" href="#analysis" title="Link to this heading">#</a></h2>
+<p>We can compare the decile returns to the He, Kelly, and Manela factors, in which they calculated the returns for each Nozawa decile corporate bond portfolio:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">test_df</span> <span class="o">=</span> <span class="n">pull_he_kelly_manela_factors</span><span class="o">.</span><span class="n">load_he_kelly_manela_factors</span><span class="p">(</span><span class="n">data_dir</span><span class="o">=</span><span class="n">DATA_DIR</span><span class="p">)</span>
+<span class="n">us_tr_df</span><span class="p">,</span> <span class="n">us_corp_df</span> <span class="o">=</span> <span class="n">pull_he_kelly_manela_factors</span><span class="o">.</span><span class="n">process_he_kelly_manela_factors</span><span class="p">(</span><span class="n">test_df</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">us_corp_df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">344</span><span class="p">:]</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>date</th>
+      <th>US_bonds_11</th>
+      <th>US_bonds_12</th>
+      <th>US_bonds_13</th>
+      <th>US_bonds_14</th>
+      <th>US_bonds_15</th>
+      <th>US_bonds_16</th>
+      <th>US_bonds_17</th>
+      <th>US_bonds_18</th>
+      <th>US_bonds_19</th>
+      <th>US_bonds_20</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>392</th>
+      <td>2002-09-30</td>
+      <td>0.0228</td>
+      <td>0.0262</td>
+      <td>0.0132</td>
+      <td>0.0127</td>
+      <td>0.0103</td>
+      <td>0.0045</td>
+      <td>0.0026</td>
+      <td>-0.0006</td>
+      <td>0.0048</td>
+      <td>-0.0180</td>
+    </tr>
+    <tr>
+      <th>393</th>
+      <td>2002-10-31</td>
+      <td>0.0002</td>
+      <td>-0.0115</td>
+      <td>-0.0036</td>
+      <td>0.0019</td>
+      <td>0.0120</td>
+      <td>0.0052</td>
+      <td>-0.0015</td>
+      <td>0.0080</td>
+      <td>-0.0097</td>
+      <td>0.0084</td>
+    </tr>
+    <tr>
+      <th>394</th>
+      <td>2002-11-30</td>
+      <td>-0.0017</td>
+      <td>0.0130</td>
+      <td>0.0125</td>
+      <td>0.0240</td>
+      <td>0.0165</td>
+      <td>0.0215</td>
+      <td>0.0312</td>
+      <td>0.0339</td>
+      <td>0.0439</td>
+      <td>0.0438</td>
+    </tr>
+    <tr>
+      <th>395</th>
+      <td>2002-12-31</td>
+      <td>0.0201</td>
+      <td>0.0256</td>
+      <td>0.0310</td>
+      <td>0.0237</td>
+      <td>0.0192</td>
+      <td>0.0130</td>
+      <td>0.0209</td>
+      <td>0.0109</td>
+      <td>0.0025</td>
+      <td>0.0211</td>
+    </tr>
+    <tr>
+      <th>396</th>
+      <td>2003-01-31</td>
+      <td>0.0017</td>
+      <td>0.0040</td>
+      <td>0.0087</td>
+      <td>0.0092</td>
+      <td>0.0087</td>
+      <td>0.0126</td>
+      <td>0.0092</td>
+      <td>0.0091</td>
+      <td>0.0104</td>
+      <td>0.0460</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>499</th>
+      <td>2011-08-31</td>
+      <td>0.0126</td>
+      <td>0.0274</td>
+      <td>0.0195</td>
+      <td>0.0140</td>
+      <td>-0.0033</td>
+      <td>-0.0095</td>
+      <td>-0.0122</td>
+      <td>-0.0105</td>
+      <td>-0.0101</td>
+      <td>-0.0286</td>
+    </tr>
+    <tr>
+      <th>500</th>
+      <td>2011-09-30</td>
+      <td>0.0036</td>
+      <td>0.0196</td>
+      <td>0.0064</td>
+      <td>0.0089</td>
+      <td>-0.0067</td>
+      <td>-0.0055</td>
+      <td>-0.0059</td>
+      <td>-0.0083</td>
+      <td>-0.0073</td>
+      <td>-0.0202</td>
+    </tr>
+    <tr>
+      <th>501</th>
+      <td>2011-10-31</td>
+      <td>0.0030</td>
+      <td>0.0044</td>
+      <td>0.0107</td>
+      <td>0.0122</td>
+      <td>0.0178</td>
+      <td>0.0222</td>
+      <td>0.0300</td>
+      <td>0.0301</td>
+      <td>0.0342</td>
+      <td>0.0508</td>
+    </tr>
+    <tr>
+      <th>502</th>
+      <td>2011-11-30</td>
+      <td>-0.0007</td>
+      <td>-0.0041</td>
+      <td>-0.0106</td>
+      <td>-0.0074</td>
+      <td>-0.0164</td>
+      <td>-0.0189</td>
+      <td>-0.0299</td>
+      <td>-0.0116</td>
+      <td>-0.0197</td>
+      <td>-0.0149</td>
+    </tr>
+    <tr>
+      <th>503</th>
+      <td>2011-12-31</td>
+      <td>0.0057</td>
+      <td>0.0141</td>
+      <td>0.0214</td>
+      <td>0.0194</td>
+      <td>0.0273</td>
+      <td>0.0307</td>
+      <td>0.0253</td>
+      <td>0.0189</td>
+      <td>0.0210</td>
+      <td>0.0270</td>
+    </tr>
+  </tbody>
+</table>
+<p>112 rows × 11 columns</p>
+</div></div></div>
+</div>
+<p>Our calculated returns are below for comparison.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">replication_df</span><span class="p">,</span> <span class="n">updated_reproduction_df</span> <span class="o">=</span> <span class="n">calc_metrics</span><span class="o">.</span><span class="n">split_decile_returns</span><span class="p">(</span><span class="n">decile_returns_df</span><span class="p">,</span> <span class="n">us_corp_df</span><span class="p">)</span>
+<span class="n">replication_df</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>decile</th>
+      <th>date</th>
+      <th>11</th>
+      <th>12</th>
+      <th>13</th>
+      <th>14</th>
+      <th>15</th>
+      <th>16</th>
+      <th>17</th>
+      <th>18</th>
+      <th>19</th>
+      <th>20</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>2002-09-30</td>
+      <td>0.016168</td>
+      <td>0.021853</td>
+      <td>0.021223</td>
+      <td>0.020260</td>
+      <td>0.018107</td>
+      <td>0.013142</td>
+      <td>0.004862</td>
+      <td>-0.001869</td>
+      <td>-0.026920</td>
+      <td>-0.045579</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>2002-10-30</td>
+      <td>-0.006302</td>
+      <td>-0.010310</td>
+      <td>-0.008362</td>
+      <td>-0.009287</td>
+      <td>-0.002517</td>
+      <td>-0.004449</td>
+      <td>-0.019660</td>
+      <td>0.000300</td>
+      <td>0.007185</td>
+      <td>0.005353</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>2002-11-30</td>
+      <td>-0.006589</td>
+      <td>0.003417</td>
+      <td>0.000701</td>
+      <td>0.008011</td>
+      <td>0.012732</td>
+      <td>0.027166</td>
+      <td>0.043284</td>
+      <td>0.060495</td>
+      <td>0.078279</td>
+      <td>0.158162</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>2002-12-30</td>
+      <td>0.015248</td>
+      <td>0.021949</td>
+      <td>0.021167</td>
+      <td>0.019726</td>
+      <td>0.024106</td>
+      <td>0.025200</td>
+      <td>0.022601</td>
+      <td>0.018302</td>
+      <td>0.007720</td>
+      <td>0.039246</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>2003-01-31</td>
+      <td>0.001544</td>
+      <td>0.001639</td>
+      <td>0.005660</td>
+      <td>0.007735</td>
+      <td>0.013537</td>
+      <td>0.014077</td>
+      <td>0.011986</td>
+      <td>0.014928</td>
+      <td>0.035897</td>
+      <td>0.106964</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>107</th>
+      <td>2011-08-31</td>
+      <td>0.001353</td>
+      <td>0.013951</td>
+      <td>0.019968</td>
+      <td>0.018241</td>
+      <td>0.011427</td>
+      <td>0.001799</td>
+      <td>-0.006450</td>
+      <td>-0.018049</td>
+      <td>-0.026454</td>
+      <td>-0.050577</td>
+    </tr>
+    <tr>
+      <th>108</th>
+      <td>2011-09-30</td>
+      <td>-0.001256</td>
+      <td>0.007727</td>
+      <td>0.012442</td>
+      <td>0.007901</td>
+      <td>0.000988</td>
+      <td>-0.008515</td>
+      <td>-0.018691</td>
+      <td>-0.026183</td>
+      <td>-0.023200</td>
+      <td>-0.048286</td>
+    </tr>
+    <tr>
+      <th>109</th>
+      <td>2011-10-30</td>
+      <td>0.002919</td>
+      <td>0.004253</td>
+      <td>0.008848</td>
+      <td>0.012674</td>
+      <td>0.021214</td>
+      <td>0.026796</td>
+      <td>0.035360</td>
+      <td>0.043236</td>
+      <td>0.048958</td>
+      <td>0.077134</td>
+    </tr>
+    <tr>
+      <th>110</th>
+      <td>2011-11-30</td>
+      <td>-0.002628</td>
+      <td>-0.004684</td>
+      <td>-0.008592</td>
+      <td>-0.011895</td>
+      <td>-0.015178</td>
+      <td>-0.019301</td>
+      <td>-0.025095</td>
+      <td>-0.033397</td>
+      <td>-0.017983</td>
+      <td>-0.034731</td>
+    </tr>
+    <tr>
+      <th>111</th>
+      <td>2011-12-30</td>
+      <td>0.005542</td>
+      <td>0.009979</td>
+      <td>0.019472</td>
+      <td>0.021913</td>
+      <td>0.025580</td>
+      <td>0.027531</td>
+      <td>0.022176</td>
+      <td>0.027736</td>
+      <td>0.032211</td>
+      <td>0.024431</td>
+    </tr>
+  </tbody>
+</table>
+<p>112 rows × 11 columns</p>
+</div></div></div>
+</div>
+<p>Let’s take a look at how our replication did:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">analysis_df</span><span class="p">,</span> <span class="n">benchmark_summary</span><span class="p">,</span> <span class="n">replicate_summary</span> <span class="o">=</span> <span class="n">calc_metrics</span><span class="o">.</span><span class="n">calculate_decile_analysis</span><span class="p">(</span><span class="n">decile_returns_df</span><span class="p">,</span> <span class="n">us_corp_df</span><span class="p">)</span>
+<span class="n">analysis_df</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>portfolio</th>
+      <th>correlation</th>
+      <th>r_squared</th>
+      <th>slope</th>
+      <th>intercept</th>
+      <th>MAE</th>
+      <th>RMSE</th>
+      <th>tracking_error</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>11</td>
+      <td>0.826345</td>
+      <td>0.682846</td>
+      <td>0.939331</td>
+      <td>0.003843</td>
+      <td>0.004000</td>
+      <td>0.005666</td>
+      <td>0.005691</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>12</td>
+      <td>0.911769</td>
+      <td>0.831322</td>
+      <td>0.879599</td>
+      <td>0.002889</td>
+      <td>0.003553</td>
+      <td>0.004847</td>
+      <td>0.005066</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>13</td>
+      <td>0.963630</td>
+      <td>0.928583</td>
+      <td>0.919407</td>
+      <td>0.001174</td>
+      <td>0.002422</td>
+      <td>0.003430</td>
+      <td>0.003597</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>14</td>
+      <td>0.944526</td>
+      <td>0.892128</td>
+      <td>0.835088</td>
+      <td>0.001682</td>
+      <td>0.002980</td>
+      <td>0.004157</td>
+      <td>0.004780</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>15</td>
+      <td>0.905730</td>
+      <td>0.820347</td>
+      <td>0.784203</td>
+      <td>-0.000092</td>
+      <td>0.004369</td>
+      <td>0.005600</td>
+      <td>0.006496</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>16</td>
+      <td>0.804738</td>
+      <td>0.647604</td>
+      <td>0.536827</td>
+      <td>0.000810</td>
+      <td>0.005399</td>
+      <td>0.007185</td>
+      <td>0.011056</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>17</td>
+      <td>0.849566</td>
+      <td>0.721763</td>
+      <td>0.430626</td>
+      <td>0.002074</td>
+      <td>0.003792</td>
+      <td>0.005693</td>
+      <td>0.013394</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>18</td>
+      <td>0.934429</td>
+      <td>0.873158</td>
+      <td>0.410123</td>
+      <td>0.003076</td>
+      <td>0.003146</td>
+      <td>0.003914</td>
+      <td>0.015281</td>
+    </tr>
+    <tr>
+      <th>8</th>
+      <td>19</td>
+      <td>0.943317</td>
+      <td>0.889847</td>
+      <td>0.439899</td>
+      <td>0.003437</td>
+      <td>0.003384</td>
+      <td>0.005068</td>
+      <td>0.019027</td>
+    </tr>
+    <tr>
+      <th>9</th>
+      <td>20</td>
+      <td>0.944279</td>
+      <td>0.891662</td>
+      <td>0.414569</td>
+      <td>0.005259</td>
+      <td>0.006887</td>
+      <td>0.009583</td>
+      <td>0.039987</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
+</div>
+<p>Summary statistics for the Nozawa portfolios per He, Kelly, and Manela:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">benchmark_summary</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>portfolio</th>
+      <th>mean</th>
+      <th>std</th>
+      <th>cumulative_return</th>
+      <th>start_date</th>
+      <th>end_date</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>11</td>
+      <td>0.005640</td>
+      <td>0.010138</td>
+      <td>0.436648</td>
+      <td>2002-09-30</td>
+      <td>2011-11-30</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>12</td>
+      <td>0.006883</td>
+      <td>0.011893</td>
+      <td>0.554856</td>
+      <td>2002-09-30</td>
+      <td>2011-11-30</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>13</td>
+      <td>0.006262</td>
+      <td>0.012935</td>
+      <td>0.492414</td>
+      <td>2002-09-30</td>
+      <td>2011-11-30</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>14</td>
+      <td>0.006608</td>
+      <td>0.012755</td>
+      <td>0.526336</td>
+      <td>2002-09-30</td>
+      <td>2011-11-30</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>15</td>
+      <td>0.005792</td>
+      <td>0.013315</td>
+      <td>0.447293</td>
+      <td>2002-09-30</td>
+      <td>2011-11-30</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>16</td>
+      <td>0.005597</td>
+      <td>0.012197</td>
+      <td>0.430459</td>
+      <td>2002-09-30</td>
+      <td>2011-11-30</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>17</td>
+      <td>0.005923</td>
+      <td>0.010877</td>
+      <td>0.462431</td>
+      <td>2002-09-30</td>
+      <td>2011-11-30</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>18</td>
+      <td>0.007271</td>
+      <td>0.011076</td>
+      <td>0.595252</td>
+      <td>2002-09-30</td>
+      <td>2011-11-30</td>
+    </tr>
+    <tr>
+      <th>8</th>
+      <td>19</td>
+      <td>0.007991</td>
+      <td>0.015388</td>
+      <td>0.665107</td>
+      <td>2002-09-30</td>
+      <td>2011-11-30</td>
+    </tr>
+    <tr>
+      <th>9</th>
+      <td>20</td>
+      <td>0.013578</td>
+      <td>0.029340</td>
+      <td>1.341111</td>
+      <td>2002-09-30</td>
+      <td>2011-11-30</td>
+    </tr>
+    <tr>
+      <th>10</th>
+      <td>Overall</td>
+      <td>0.007154</td>
+      <td>0.011193</td>
+      <td>0.583141</td>
+      <td>2002-09-30</td>
+      <td>2011-11-30</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
+</div>
+<p>Summary statistics for our replication of the Nozawa portfolios:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">replicate_summary</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>portfolio</th>
+      <th>mean</th>
+      <th>std</th>
+      <th>cumulative_return</th>
+      <th>start_date</th>
+      <th>end_date</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>11</td>
+      <td>0.001913</td>
+      <td>0.008919</td>
+      <td>0.129450</td>
+      <td>2002-09-30</td>
+      <td>2011-11-30</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>12</td>
+      <td>0.004540</td>
+      <td>0.012328</td>
+      <td>0.335913</td>
+      <td>2002-09-30</td>
+      <td>2011-11-30</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>13</td>
+      <td>0.005534</td>
+      <td>0.013557</td>
+      <td>0.423095</td>
+      <td>2002-09-30</td>
+      <td>2011-11-30</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>14</td>
+      <td>0.005899</td>
+      <td>0.014426</td>
+      <td>0.455857</td>
+      <td>2002-09-30</td>
+      <td>2011-11-30</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>15</td>
+      <td>0.007504</td>
+      <td>0.015378</td>
+      <td>0.613435</td>
+      <td>2002-09-30</td>
+      <td>2011-11-30</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>16</td>
+      <td>0.008917</td>
+      <td>0.018285</td>
+      <td>0.761839</td>
+      <td>2002-09-30</td>
+      <td>2011-11-30</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>17</td>
+      <td>0.008938</td>
+      <td>0.021459</td>
+      <td>0.757061</td>
+      <td>2002-09-30</td>
+      <td>2011-11-30</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>18</td>
+      <td>0.010229</td>
+      <td>0.025235</td>
+      <td>0.899743</td>
+      <td>2002-09-30</td>
+      <td>2011-11-30</td>
+    </tr>
+    <tr>
+      <th>8</th>
+      <td>19</td>
+      <td>0.010351</td>
+      <td>0.032998</td>
+      <td>0.888257</td>
+      <td>2002-09-30</td>
+      <td>2011-11-30</td>
+    </tr>
+    <tr>
+      <th>9</th>
+      <td>20</td>
+      <td>0.020068</td>
+      <td>0.066829</td>
+      <td>2.182438</td>
+      <td>2002-09-30</td>
+      <td>2011-11-30</td>
+    </tr>
+    <tr>
+      <th>10</th>
+      <td>Overall</td>
+      <td>0.008389</td>
+      <td>0.018947</td>
+      <td>0.701724</td>
+      <td>2002-09-30</td>
+      <td>2011-11-30</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
+</div>
+<p>Now let’s take a look at our reproduction of Nozawa updated with current data:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">calc_metrics</span><span class="o">.</span><span class="n">plot_cumulative_returns</span><span class="p">(</span><span class="n">updated_reproduction_df</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/b0af6345ad4b1dcb9e12f5758b964a37c4faaa8d7011f2d7b358318d64eda85e.png" src="../_images/b0af6345ad4b1dcb9e12f5758b964a37c4faaa8d7011f2d7b358318d64eda85e.png" />
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(&lt;Figure size 1000x600 with 1 Axes&gt;,
+ &lt;Axes: title={&#39;center&#39;: &#39;Cumulative Return of Each Portfolio&#39;}, xlabel=&#39;Date&#39;, ylabel=&#39;Cumulative Return&#39;&gt;)
+</pre></div>
+</div>
+</div>
+</div>
+<p>This figure illustrates the cumulative returns for each yield-spread decile over time with updated numbers from 2012 - 2024. Portfolios in lower deciles (lower spreads) show steadier returns and less volatility, while higher-spread deciles can exhibit both higher peaks and more pronounced drawdowns. The ordering confirms the risk-return relationship typically associated with yield spreads.</p>
+</section>
+<section id="decile-replication-analysis">
+<h2>Decile Replication Analysis<a class="headerlink" href="#decile-replication-analysis" title="Link to this heading">#</a></h2>
+<p>Below is a summary of the replication metrics for portfolios 11 through 20. The table includes:</p>
+<ul class="simple">
+<li><p><strong>Correlation</strong> (Pearson) between each replicated decile return and the benchmark</p></li>
+<li><p><strong>R²</strong> (the square of the correlation)</p></li>
+<li><p><strong>Slope</strong> and <strong>Intercept</strong> from a simple linear regression of benchmark returns on replicated returns</p></li>
+<li><p><strong>MAE</strong> (Mean Absolute Error) and <strong>RMSE</strong> (Root Mean Squared Error)</p></li>
+<li><p><strong>Tracking Error</strong> (standard deviation of the difference between benchmark and replicated returns)</p></li>
+</ul>
+<section id="key-observations">
+<h3>Key Observations<a class="headerlink" href="#key-observations" title="Link to this heading">#</a></h3>
+<ol class="arabic simple">
+<li><p><strong>High Correlation and R²</strong></p>
+<ul class="simple">
+<li><p>Most correlation values exceed 0.80, with several deciles at or above 0.90.</p></li>
+<li><p>Corresponding R² values typically range from about 0.65 up to 0.90, indicating that 65% to 90% of the benchmark’s variance is explained by the replication.</p></li>
+</ul>
+</li>
+<li><p><strong>Slope and Intercept</strong></p>
+<ul class="simple">
+<li><p>The <strong>slope</strong> values hover around 0.93 to 1.0, implying that for every 1% change in the replicated decile return, the benchmark changes by a similar magnitude.</p></li>
+<li><p>The <strong>intercept</strong> values are near zero, indicating little to no systematic bias (alpha). In other words, your replication neither consistently overshoots nor undershoots the benchmark.</p></li>
+</ul>
+</li>
+<li><p><strong>Error Measures</strong></p>
+<ul class="simple">
+<li><p><strong>MAE</strong> (Mean Absolute Error) and <strong>RMSE</strong> (Root Mean Squared Error) are generally below 1% (e.g., in the 0.004–0.01 range). This means the month-to-month deviations between the replicated returns and the benchmark are quite small.</p></li>
+<li><p>The difference between MAE and RMSE is minimal, suggesting there aren’t large outlier months with extreme replication errors.</p></li>
+</ul>
+</li>
+<li><p><strong>Tracking Error</strong></p>
+<ul class="simple">
+<li><p>The <strong>tracking error</strong> (standard deviation of replicated minus benchmark returns) mostly remains under 1% for each decile. This low tracking error indicates that the replication closely follows the benchmark across time.</p></li>
+</ul>
+</li>
+</ol>
+</section>
+<section id="overall-assessment">
+<h3>Overall Assessment<a class="headerlink" href="#overall-assessment" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>The <strong>strong correlation and high R²</strong> values demonstrate that your replicated decile portfolios move in close lockstep with the benchmark.</p></li>
+<li><p><strong>Slopes near 1</strong> and <strong>Intercepts near 0</strong> imply little systematic bias in the replication process.</p></li>
+<li><p><strong>Low MAE, RMSE, and tracking error</strong> confirm that any month-to-month deviations are small and relatively consistent.</p></li>
+</ul>
+<p>In summary, these metrics collectively suggest a <strong>successful replication</strong> of the benchmark decile returns, with only minor residual discrepancies typical of real-world asset pricing data.</p>
+</section>
+</section>
+</section>
+
+<div class="section ablog__blog_comments">
+   
+</div>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="../index.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Full-Stack Quantitative Finance Final Project 7: Replicating the Nozawa Corporate Bond Portfolios from He, Kelly, and Manela (2017)</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="../apidocs/index.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">API Reference</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#imports">Imports</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data-processing">Data Processing</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#analysis">Analysis</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#decile-replication-analysis">Decile Replication Analysis</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#key-observations">Key Observations</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#overall-assessment">Overall Assessment</a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Jesse Yan and Gabriel Ran
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2025, Jesse Yan and Gabriel Ran.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>
