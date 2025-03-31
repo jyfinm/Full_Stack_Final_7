@@ -153,13 +153,11 @@ def task_config():
 def task_pull_all():
     """ """
     file_dep = [
-        "./src/settings.py",
         "./src/pull_bondret_treasury.py",
         "./src/pull_CRSP_bond_returns.py",
         "./src/pull_he_kelly_manela_factors.py"
         ]
     file_output = [
-        "ipython ./src/settings.py",
         "bondret_treasury.csv",
         "CRSP_bond_returns.parquet",
         "He_Kelly_Manela_Factors_And_Test_Assets_monthly.csv"
